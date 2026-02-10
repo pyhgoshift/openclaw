@@ -1,28 +1,57 @@
 ﻿<!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PyhgoShift | 통합 관제 센터</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap"
+        rel="stylesheet">
     <style>
-        :root { --neon-blue: #00d9ff; --neon-green: #00ff41; --bg-black: #000000; }
-        body { background: var(--bg-black); color: #ffffff; font-family: 'Noto Sans KR', sans-serif; overflow: hidden; }
-        .monitor-panel { background: rgba(10, 10, 10, 0.98); border: 1px solid #222; }
-        .header-font { font-family: 'Orbitron', sans-serif; }
-        .expert-card { border-left: 3px solid #333; transition: all 0.3s; background: rgba(255,255,255,0.01); }
-        .expert-active { border-left-color: var(--neon-blue); background: rgba(0, 217, 255, 0.05); }
+        :root {
+            --neon-blue: #00d9ff;
+            --neon-green: #00ff41;
+            --bg-black: #000000;
+        }
+
+        body {
+            background: var(--bg-black);
+            color: #ffffff;
+            font-family: 'Noto Sans KR', sans-serif;
+            overflow: hidden;
+        }
+
+        .monitor-panel {
+            background: rgba(10, 10, 10, 0.98);
+            border: 1px solid #222;
+        }
+
+        .header-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .expert-card {
+            border-left: 3px solid #333;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .expert-active {
+            border-left-color: var(--neon-blue);
+            background: rgba(0, 217, 255, 0.05);
+        }
     </style>
 </head>
+
 <body class="h-screen flex flex-col">
     <header class="p-4 monitor-panel border-b border-zinc-800 flex justify-between items-center">
         <div class="flex items-center gap-4">
             <div class="h-12 w-12 flex items-center justify-center bg-white rounded-sm">
-                <img src="https://raw.githubusercontent.com/freudpark/pyhgoshift/main/logo-w1.png" 
-                     class="h-full w-full object-contain" 
-                     alt="PS"
-                     onerror="this.parentElement.innerHTML='<span class=\'text-black font-black\'>PS</span>'">
+                <img src="https://raw.githubusercontent.com/freudpark/pyhgoshift/main/logo-q1.png"
+                    class="h-full w-full object-contain" alt="PS"
+                    onerror="this.parentElement.innerHTML='<span class=\'text-black font-black\'>PS</span>'">
             </div>
             <div>
                 <h1 class="text-2xl font-black header-font text-white leading-none">PYHGOSHIFT</h1>
@@ -36,9 +65,12 @@
         <aside class="w-64 monitor-panel border-r border-zinc-800 p-4 space-y-4">
             <h2 class="text-[10px] font-black text-blue-500 mb-4 tracking-widest uppercase italic">Infra Status</h2>
             <div class="space-y-3 font-mono text-[11px]">
-                <div class="flex justify-between border-b border-zinc-900 pb-1"><span>Worker</span><span id="stat-worker" class="text-zinc-700">--</span></div>
-                <div class="flex justify-between border-b border-zinc-900 pb-1"><span>AI Link</span><span id="stat-ai" class="text-zinc-700">--</span></div>
-                <div class="flex justify-between border-b border-zinc-900 pb-1"><span>Latency</span><span id="stat-latency" class="text-zinc-700">--</span></div>
+                <div class="flex justify-between border-b border-zinc-900 pb-1"><span>Worker</span><span
+                        id="stat-worker" class="text-zinc-700">--</span></div>
+                <div class="flex justify-between border-b border-zinc-900 pb-1"><span>AI Link</span><span id="stat-ai"
+                        class="text-zinc-700">--</span></div>
+                <div class="flex justify-between border-b border-zinc-900 pb-1"><span>Latency</span><span
+                        id="stat-latency" class="text-zinc-700">--</span></div>
             </div>
         </aside>
 
@@ -46,8 +78,11 @@
             <div id="chat-window" class="flex-1 overflow-y-auto p-6 space-y-4 text-sm scroll-hide"></div>
             <div class="p-6 monitor-panel border-t border-zinc-800">
                 <div class="max-w-4xl mx-auto flex gap-3">
-                    <input type="text" id="user-input" class="flex-1 bg-zinc-900 border border-zinc-700 rounded p-4 text-white outline-none focus:border-blue-500" placeholder="명령 입력...">
-                    <button id="send-btn" class="bg-white text-black px-8 py-4 rounded font-black header-font text-xs">DISPATCH</button>
+                    <input type="text" id="user-input"
+                        class="flex-1 bg-zinc-900 border border-zinc-700 rounded p-4 text-white outline-none focus:border-blue-500"
+                        placeholder="명령 입력...">
+                    <button id="send-btn"
+                        class="bg-white text-black px-8 py-4 rounded font-black header-font text-xs">DISPATCH</button>
                 </div>
             </div>
         </main>
@@ -81,9 +116,9 @@
                 document.getElementById('stat-worker').className = 'text-green-500 font-bold';
                 document.getElementById('stat-ai').innerText = data.nvidia;
                 document.getElementById('stat-ai').className = 'text-green-500 font-bold';
-                document.getElementById('stat-latency').innerText = `${Date.now()-start}ms`;
+                document.getElementById('stat-latency').innerText = `${Date.now() - start}ms`;
                 experts.forEach(n => document.getElementById(`exp-${n}`).classList.add('expert-active', 'opacity-100'));
-            } catch (e) { 
+            } catch (e) {
                 document.getElementById('stat-worker').innerText = 'ERROR';
             }
         }
@@ -94,7 +129,7 @@
 
         async function dispatch() {
             const val = input.value.trim();
-            if(!val) return;
+            if (!val) return;
             appendMsg('CMD', val, false);
             input.value = '';
             const aiBox = appendMsg('SYS', '...', true);
@@ -130,7 +165,8 @@
         checkHealth();
         setInterval(() => { document.getElementById('sys-clock').innerText = new Date().toLocaleString(); }, 1000);
         btn.onclick = dispatch;
-        input.onkeypress = (e) => { if(e.key==='Enter') dispatch(); };
+        input.onkeypress = (e) => { if (e.key === 'Enter') dispatch(); };
     </script>
 </body>
+
 </html>
