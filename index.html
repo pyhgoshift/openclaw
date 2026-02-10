@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PyhgoShift | OS OpenClaw V5.2</title>
+    <title>PyhgoShift | OS OpenClaw V5.3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -12,11 +12,11 @@
         .monitor-panel { background: rgba(10, 10, 10, 0.98); border: 1px solid #222; }
         .header-font { font-family: 'Orbitron', sans-serif; }
         .expert-card { border-left: 3px solid #333; transition: all 0.3s; background: rgba(255,255,255,0.01); }
-        .expert-active { border-left-color: var(--neon-blue); background: rgba(0, 217, 255, 0.1); box-shadow: inset 5px 0 10px rgba(0, 217, 255, 0.1); }
+        .expert-active { border-left-color: var(--neon-blue); background: rgba(0, 217, 255, 0.1); box-shadow: inset 5px 0 10px rgba(0, 217, 255, 0.05); }
         .scroll-hide::-webkit-scrollbar { width: 4px; }
         .scroll-hide::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
         @keyframes pulse-blue { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        .thinking { animation: pulse-blue 1.5s infinite; color: var(--neon-blue); font-weight: bold; }
+        .thinking { animation: pulse-blue 1.5s infinite; color: var(--neon-blue); font-weight: bold; font-family: monospace; }
     </style>
 </head>
 <body class="h-screen flex flex-col">
@@ -27,10 +27,10 @@
             </div>
             <div>
                 <h1 class="text-xl font-black header-font text-white leading-none tracking-tighter">PYHGOSHIFT</h1>
-                <p class="text-[8px] text-blue-500 font-bold tracking-[0.2em] uppercase mt-1">Cognitive OS OpenClaw V5.2</p>
+                <p class="text-[8px] text-blue-500 font-bold tracking-[0.2em] uppercase mt-1">Cognitive OS OpenClaw V5.3</p>
             </div>
         </div>
-        <div id="sys-clock" class="text-[10px] font-mono text-zinc-600 uppercase tracking-widest"></div>
+        <div id="sys-clock" class="text-[10px] font-mono text-zinc-600 uppercase"></div>
     </header>
 
     <div class="flex-1 flex overflow-hidden">
@@ -40,13 +40,12 @@
                 <div class="space-y-3 font-mono text-[10px]">
                     <div class="flex justify-between border-b border-zinc-900 pb-1"><span>Worker</span><span id="stat-worker" class="text-zinc-700 font-bold">--</span></div>
                     <div class="flex justify-between border-b border-zinc-900 pb-1"><span>AI Link</span><span id="stat-ai" class="text-zinc-700 font-bold">--</span></div>
-                    <div class="flex justify-between border-b border-zinc-900 pb-1"><span>Latency</span><span id="stat-latency" class="text-zinc-700 font-bold">--</span></div>
                 </div>
             </div>
             <div class="border-t border-zinc-900 pt-6">
                 <h2 class="text-[9px] font-black text-yellow-600 mb-3 tracking-widest uppercase">Cost Control</h2>
                 <div class="space-y-3 font-mono text-[10px]">
-                    <div class="flex justify-between border-b border-zinc-900 pb-1 text-zinc-500"><span>Plan</span><span class="text-white">$5/Mo FIXED</span></div>
+                    <div class="flex justify-between border-b border-zinc-900 pb-1 text-zinc-500"><span>CF Plan</span><span class="text-white">$5 FIXED</span></div>
                     <div class="flex justify-between border-b border-zinc-900 pb-1 text-zinc-500"><span>Session</span><span id="stat-tokens" class="text-blue-400">0 tkn</span></div>
                 </div>
             </div>
@@ -103,7 +102,6 @@
             appendMsg('COMMANDER', val, false);
             input.value = '';
             
-            // [식별 보완] 생각 중임을 알리는 애니메이션 메시지
             const aiBox = appendMsg('7 PARKS', '<span class="thinking"> 분석 중... 전문가를 소환하고 있습니다.</span>', true);
 
             try {
@@ -115,36 +113,44 @@
 
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
-                let firstChunk = true;
+                let hasStarted = false;
 
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
                     
-                    if (firstChunk) { 
-                        aiBox.innerText = ''; // 첫 데이터가 오면 "분석 중" 문구를 지웁니다.
-                        firstChunk = false;
-                    }
-
-                    const chunk = decoder.decode(value);
+                    const chunk = decoder.decode(value, { stream: true });
                     const lines = chunk.split('\n');
+                    
                     for (const line of lines) {
-                        if (line.startsWith('data: ')) {
-                            const dataStr = line.replace('data: ', '').trim();
-                            if (dataStr === '[DONE]') break;
-                            try {
-                                const json = JSON.parse(dataStr);
-                                if (json.usage) {
-                                    document.getElementById('stat-tokens').innerText = `${json.usage.total_tokens.toLocaleString()} tkn`;
+                        const trimmedLine = line.trim();
+                        if (!trimmedLine || !trimmedLine.startsWith('data: ')) continue;
+                        
+                        const dataStr = trimmedLine.replace('data: ', '');
+                        if (dataStr === '[DONE]') break;
+
+                        try {
+                            const json = JSON.parse(dataStr);
+                            const content = json.choices[0]?.delta?.content || '';
+                            
+                            if (content) {
+                                if (!hasStarted) {
+                                    aiBox.innerText = ''; 
+                                    hasStarted = true;
                                 }
-                                const content = json.choices[0]?.delta?.content || '';
                                 aiBox.innerText += content;
                                 chat.scrollTop = chat.scrollHeight;
-                            } catch (e) {}
-                        }
+                            }
+
+                            if (json.usage) {
+                                document.getElementById('stat-tokens').innerText = `${json.usage.total_tokens.toLocaleString()} tkn`;
+                            }
+                        } catch (e) {}
                     }
                 }
-            } catch (e) { aiBox.innerText = "Error: " + e.message; }
+            } catch (e) { 
+                aiBox.innerText = "연결 오류 발생. 잠시 후 재시도하십시오."; 
+            }
         }
 
         function appendMsg(role, text, isAi) {
