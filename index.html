@@ -1,4 +1,4 @@
-Ôªø<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -56,7 +56,7 @@
             <div id="chat-window" class="flex-1 overflow-y-auto p-8 space-y-6 text-sm scroll-hide"></div>
             <div class="p-6 monitor-panel border-t border-zinc-800">
                 <div class="max-w-4xl mx-auto flex gap-3">
-                    <input type="text" id="user-input" class="flex-1 bg-zinc-900 border border-zinc-800 rounded-lg p-4 text-white outline-none focus:border-blue-500 transition-all font-medium" placeholder="Î™ÖÎ†πÏùÑ ÏûÖÎ†•ÌïòÏã≠ÏãúÏò§...">
+                    <input type="text" id="user-input" class="flex-1 bg-zinc-900 border border-zinc-800 rounded-lg p-4 text-white outline-none focus:border-blue-500 transition-all font-medium" placeholder="∏Ì∑…¿ª ¿‘∑¬«œΩ Ω√ø¿...">
                     <button id="send-btn" class="bg-white text-black px-10 py-4 rounded-lg font-black header-font text-xs hover:bg-blue-400">DISPATCH</button>
                 </div>
             </div>
@@ -130,8 +130,8 @@
                             if (dataStr === '[DONE]') break;
                             try {
                                 const json = JSON.parse(dataStr);
-                                if (json.usage) { // ÏÇ¨Ïö©Îüâ Ï†ïÎ≥¥ Ìè¨Ï∞©
-                                    totalTokens += json.usage.total_tokens;
+                                if (if(json.usage){totalTokens=json.usage.total_tokens;document.getElementById("stat-tokens").innerText=totalTokens+" tkn";}) { // ªÁøÎ∑Æ ¡§∫∏ ∆˜¬¯
+                                    totalTokens += if(json.usage){totalTokens=json.usage.total_tokens;document.getElementById("stat-tokens").innerText=totalTokens+" tkn";}.total_tokens;
                                     document.getElementById('stat-tokens').innerText = `${totalTokens.toLocaleString()} tkn`;
                                 }
                                 const content = json.choices[0]?.delta?.content || '';
