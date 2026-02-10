@@ -1,10 +1,10 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PyhgoShift | í†µí•© ê´€ì œ ì„¼í„°</title>
+    <title>PyhgoShift | ÅëÇÕ °üÁ¦ ¼¾ÅÍ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap"
@@ -80,9 +80,9 @@
                 <div class="max-w-4xl mx-auto flex gap-3">
                     <input type="text" id="user-input"
                         class="flex-1 bg-zinc-900 border border-zinc-700 rounded p-4 text-white outline-none focus:border-blue-500"
-                        placeholder="ëª…ë ¹ ìž…ë ¥...">
+                        placeholder="¸í·É ÀÔ·Â...">
                     <button id="send-btn"
-                        class="bg-white text-black px-8 py-4 rounded font-black header-font text-xs">ì „ì†¡</button>
+                        class="bg-white text-black px-8 py-4 rounded font-black header-font text-xs">Àü¼Û</button>
                 </div>
             </div>
         </main>
@@ -145,7 +145,7 @@
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
-                    aiBox.innerText += new TextDecoder().decode(value);
+                    const chunk = new TextDecoder().decode(value); aiBox.innerText += chunk; chat.scrollTop = chat.scrollHeight;
                     chat.scrollTop = chat.scrollHeight;
                 }
             } catch (e) { aiBox.innerText = "Error: " + e.message; }
