@@ -3,117 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PyhgoShift | AgentOps 관제 본부</title>
+    <title>PyhgoShift | 통합 관제 센터</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --neon-blue: #00d9ff; --neon-green: #00ff41; --bg-black: #000000; }
-        body { background: var(--bg-black); color: #ffffff; font-family: 'Noto Sans KR', sans-serif; }
-        .monitor-panel { background: rgba(15, 15, 15, 0.95); border: 1px solid #222; }
+        body { background: var(--bg-black); color: #ffffff; font-family: 'Noto Sans KR', sans-serif; overflow: hidden; }
+        .monitor-panel { background: rgba(10, 10, 10, 0.98); border: 1px solid #222; }
         .header-font { font-family: 'Orbitron', sans-serif; }
-        .expert-card { border-left: 3px solid #333; transition: all 0.3s; background: rgba(255,255,255,0.02); }
-        .status-ready { color: var(--neon-green); font-weight: bold; }
+        .expert-card { border-left: 3px solid #333; transition: all 0.3s; background: rgba(255,255,255,0.01); }
+        .expert-active { border-left-color: var(--neon-blue); background: rgba(0, 217, 255, 0.05); }
     </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden">
-
-    <header class="p-5 monitor-panel border-b border-zinc-800 flex justify-between items-center">
+<body class="h-screen flex flex-col">
+    <header class="p-4 monitor-panel border-b border-zinc-800 flex justify-between items-center">
         <div class="flex items-center gap-4">
-            <img src="https://raw.githubusercontent.com/freudpark/openclaw/main/logo-w1.png" 
-                 class="h-12 w-auto object-contain" 
-                 onerror="this.src='https://via.placeholder.com/150?text=PS'">
+            <div class="h-12 w-12 flex items-center justify-center bg-white rounded-sm">
+                <img src="https://raw.githubusercontent.com/freudpark/pyhgoshift/main/logo-w1.png" 
+                     class="h-full w-full object-contain" 
+                     alt="PS"
+                     onerror="this.parentElement.innerHTML='<span class=\'text-black font-black\'>PS</span>'">
+            </div>
             <div>
-                <h1 class="text-2xl font-black header-font text-white">PYHGOSHIFT</h1>
-                <p class="text-[9px] text-blue-400 font-bold tracking-widest uppercase">Global AgentOps Command</p>
+                <h1 class="text-2xl font-black header-font text-white leading-none">PYHGOSHIFT</h1>
+                <p class="text-[9px] text-blue-500 font-bold tracking-widest uppercase mt-1">Live AgentOps Command</p>
             </div>
         </div>
-        <div id="sys-clock" class="text-xs font-mono text-zinc-400"></div>
+        <div id="sys-clock" class="text-[10px] font-mono text-zinc-500"></div>
     </header>
 
     <div class="flex-1 flex overflow-hidden">
-        <aside class="w-72 monitor-panel border-r border-zinc-800 p-4">
-            <h2 class="text-[10px] font-black text-blue-500 mb-4 tracking-widest uppercase">Real-time Telemetry</h2>
+        <aside class="w-64 monitor-panel border-r border-zinc-800 p-4 space-y-4">
+            <h2 class="text-[10px] font-black text-blue-500 mb-4 tracking-widest uppercase italic">Infra Status</h2>
             <div class="space-y-3 font-mono text-[11px]">
-                <div class="flex justify-between border-b border-zinc-900 pb-1">
-                    <span>Worker Engine</span><span id="stat-worker" class="text-green-500 font-bold font-mono">ONLINE</span>
-                </div>
-                <div class="flex justify-between border-b border-zinc-900 pb-1">
-                    <span>AI Neural Link</span><span id="stat-ai" class="text-green-500 font-bold font-mono">CONNECTED</span>
-                </div>
-                <div class="flex justify-between border-b border-zinc-900 pb-1">
-                    <span>Latency (RTT)</span><span id="stat-latency" class="text-green-500 font-bold font-mono">--ms</span>
-                </div>
-                <div class="flex justify-between border-b border-zinc-900 pb-1">
-                    <span>R2 Storage</span><span class="text-green-500 font-bold">STABLE</span>
-                </div>
-                <div class="flex justify-between border-b border-zinc-900 pb-1">
-                    <span>CORS Policy</span><span class="text-green-500 font-bold">ACTIVE</span>
-                </div>
+                <div class="flex justify-between border-b border-zinc-900 pb-1"><span>Worker</span><span id="stat-worker" class="text-zinc-700">--</span></div>
+                <div class="flex justify-between border-b border-zinc-900 pb-1"><span>AI Link</span><span id="stat-ai" class="text-zinc-700">--</span></div>
+                <div class="flex justify-between border-b border-zinc-900 pb-1"><span>Latency</span><span id="stat-latency" class="text-zinc-700">--</span></div>
             </div>
         </aside>
 
-        <main class="flex-1 flex flex-col bg-[#020202]">
-            <div id="chat-window" class="flex-1 overflow-y-auto p-8 space-y-4 text-sm"></div>
+        <main class="flex-1 flex flex-col bg-black relative">
+            <div id="chat-window" class="flex-1 overflow-y-auto p-6 space-y-4 text-sm scroll-hide"></div>
             <div class="p-6 monitor-panel border-t border-zinc-800">
                 <div class="max-w-4xl mx-auto flex gap-3">
-                    <input type="text" id="user-input" class="flex-1 bg-black border-2 border-zinc-700 rounded-lg p-4 text-white font-bold outline-none focus:border-blue-500" placeholder="명령을 하달하십시오...">
-                    <button id="send-btn" class="bg-white text-black px-8 py-4 rounded-lg font-black header-font text-sm uppercase">Dispatch</button>
+                    <input type="text" id="user-input" class="flex-1 bg-zinc-900 border border-zinc-700 rounded p-4 text-white outline-none focus:border-blue-500" placeholder="명령 입력...">
+                    <button id="send-btn" class="bg-white text-black px-8 py-4 rounded font-black header-font text-xs">DISPATCH</button>
                 </div>
             </div>
         </main>
 
-        <aside class="w-72 monitor-panel border-l border-zinc-800 p-4 overflow-y-auto">
-            <h2 class="text-[10px] font-black text-zinc-500 mb-4 tracking-widest uppercase">7 Parks Specialists</h2>
-            <div id="expert-list" class="space-y-3">
-                </div>
+        <aside class="w-64 monitor-panel border-l border-zinc-800 p-4">
+            <h2 class="text-[10px] font-black text-zinc-600 mb-4 tracking-widest uppercase">7 Specialists</h2>
+            <div id="expert-list" class="space-y-2 text-[11px]"></div>
         </aside>
     </div>
 
     <script>
-        const experts = [
-            { id: 'Blueprint', name: '전략/설계 총괄' },
-            { id: 'CodeGen', name: '시스템 아키텍트' },
-            { id: 'Reflector', name: '품질/비판 분석' },
-            { id: 'Infiltrator', name: '시장 침투/영업' },
-            { id: 'Guardian', name: '보안/인프라 관리' },
-            { id: 'Optimist', name: '사용자 경험(UX)' },
-            { id: 'DataMiner', name: '데이터 분석' }
-        ];
+        const endpoint = 'https://moltbot-sandbox.pyhgoshift.workers.dev';
+        const experts = ['Blueprint', 'CodeGen', 'Reflector', 'Infiltrator', 'Guardian', 'Optimist', 'DataMiner'];
 
-        function renderExperts(isOnline) {
+        function initUI() {
             const list = document.getElementById('expert-list');
-            list.innerHTML = '';
-            experts.forEach(exp => {
-                const div = document.createElement('div');
-                div.className = `expert-card p-3 rounded-r ${isOnline ? 'border-l-blue-500 bg-blue-500/5' : 'opacity-30'}`;
-                div.innerHTML = `
-                    <p class="text-[10px] font-bold ${isOnline ? 'text-blue-400' : 'text-zinc-500'}">@${exp.id}</p>
-                    <p class="text-[11px] text-white font-bold">${exp.name}</p>
-                    <p class="text-[8px] mt-1 ${isOnline ? 'text-green-500' : 'text-red-500'}">${isOnline ? ' ACTIVE' : ' OFFLINE'}</p>
-                `;
-                list.appendChild(div);
-            });
+            list.innerHTML = experts.map(name => `
+                <div class="expert-card p-3 rounded-r opacity-20" id="exp-${name}">
+                    <p class="text-[9px] font-bold text-blue-500">@${name}</p>
+                    <p class="text-white font-bold uppercase tracking-tighter">${name} Active</p>
+                </div>
+            `).join('');
         }
 
-        async function updateMetrics() {
+        async function checkHealth() {
             const start = Date.now();
             try {
-                const res = await fetch('https://moltbot-sandbox.pyhgoshift.workers.dev/health');
+                const res = await fetch(`${endpoint}/health`);
                 const data = await res.json();
-                const rtt = Date.now() - start;
-                document.getElementById('stat-worker').innerText = data.worker;
+                document.getElementById('stat-worker').innerText = 'ONLINE';
+                document.getElementById('stat-worker').className = 'text-green-500 font-bold';
                 document.getElementById('stat-ai').innerText = data.nvidia;
-                document.getElementById('stat-latency').innerText = `${rtt}ms`;
-                renderExperts(true); // 엔진 응답 오면 전문가들도 활성화
-            } catch (e) {
-                document.getElementById('stat-worker').innerText = 'OFFLINE';
-                renderExperts(false);
+                document.getElementById('stat-ai').className = 'text-green-500 font-bold';
+                document.getElementById('stat-latency').innerText = `${Date.now()-start}ms`;
+                experts.forEach(n => document.getElementById(`exp-${n}`).classList.add('expert-active', 'opacity-100'));
+            } catch (e) { 
+                document.getElementById('stat-worker').innerText = 'ERROR';
             }
         }
-
-        setInterval(updateMetrics, 5000);
-        updateMetrics();
-        setInterval(() => { document.getElementById('sys-clock').innerText = new Date().toLocaleString(); }, 1000);
 
         const chat = document.getElementById('chat-window');
         const input = document.getElementById('user-input');
@@ -122,23 +95,22 @@
         async function dispatch() {
             const val = input.value.trim();
             if(!val) return;
-            appendMsg('COMMANDER', val, false);
+            appendMsg('CMD', val, false);
             input.value = '';
-            const aiBox = appendMsg('7 PARKS', '분석 중...', true);
+            const aiBox = appendMsg('SYS', '...', true);
 
             try {
-                const res = await fetch('https://moltbot-sandbox.pyhgoshift.workers.dev/ask', {
+                const res = await fetch(`${endpoint}/ask`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ question: val })
                 });
                 const reader = res.body.getReader();
-                const decoder = new TextDecoder();
                 aiBox.innerText = '';
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
-                    aiBox.innerText += decoder.decode(value, { stream: true });
+                    aiBox.innerText += new TextDecoder().decode(value);
                     chat.scrollTop = chat.scrollHeight;
                 }
             } catch (e) { aiBox.innerText = "Error: " + e.message; }
@@ -146,13 +118,17 @@
 
         function appendMsg(role, text, isAi) {
             const div = document.createElement('div');
-            div.className = isAi ? 'text-blue-400' : 'text-white font-bold';
-            div.innerHTML = `<span class="text-[10px] opacity-40">[${role}]</span> ${text}`;
+            div.className = isAi ? 'bg-zinc-900/50 p-4 border-l-2 border-blue-500 text-zinc-300 mb-4' : 'text-right p-2 text-zinc-500 text-xs mb-2';
+            div.innerHTML = `<span class="text-[9px] block opacity-50 uppercase">${role}</span><span>${text}</span>`;
             chat.appendChild(div);
             chat.scrollTop = chat.scrollHeight;
-            return div;
+            return div.querySelector('span:last-child');
         }
 
+        initUI();
+        setInterval(checkHealth, 5000);
+        checkHealth();
+        setInterval(() => { document.getElementById('sys-clock').innerText = new Date().toLocaleString(); }, 1000);
         btn.onclick = dispatch;
         input.onkeypress = (e) => { if(e.key==='Enter') dispatch(); };
     </script>
