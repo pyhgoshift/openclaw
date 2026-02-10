@@ -3,151 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PyhgoShift | AgentOps 통합 관제 본부</title>
+    <title>PyhgoShift | 실시간 관제 시스템</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --neon-blue: #00d9ff; --neon-green: #00ff41; --neon-red: #ff3131; --bg-black: #000000; }
-        body { 
-            background-color: var(--bg-black); 
-            color: #ffffff; 
-            font-family: 'Noto Sans KR', sans-serif;
-            letter-spacing: -0.02em;
-        }
-        .header-font { font-family: 'Orbitron', sans-serif; }
+        :root { --neon-blue: #00d9ff; --neon-green: #00ff41; --bg-black: #000000; }
+        body { background: var(--bg-black); color: #ffffff; font-family: 'Noto Sans KR', sans-serif; }
         .monitor-panel { background: rgba(15, 15, 15, 0.95); border: 1px solid #222; }
-        .status-ok { color: var(--neon-green); text-shadow: 0 0 5px rgba(0, 255, 65, 0.5); }
-        .text-high-contrast { color: #ffffff !important; }
-        .expert-card { border-left: 3px solid #333; transition: all 0.3s; }
-        .expert-card.active { border-left-color: var(--neon-blue); background: rgba(0, 217, 255, 0.05); }
-        input::placeholder { color: #555; }
+        .status-val { font-weight: bold; font-family: 'Orbitron', sans-serif; }
+        .header-font { font-family: 'Orbitron', sans-serif; }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
-
     <header class="p-5 monitor-panel border-b border-zinc-800 flex justify-between items-center">
-        <div class="flex items-center gap-6">
-            <div class="flex items-center gap-4">
-                <div class="h-12 flex items-center justify-center">
-                    <img src="logo-w1.png" class="h-full w-auto object-contain" alt="PyhgoShift Logo" onerror="this.parentElement.innerHTML='<div class=\'w-12 h-12 bg-white flex items-center justify-center\'><span class=\'text-black font-black\'>P</span></div>'">
-                </div>
-                <div>
-                    <h1 class="text-2xl font-black header-font tracking-tighter text-white">PYHGOSHIFT</h1>
-                    <p class="text-[10px] text-blue-400 font-bold tracking-[0.3em] uppercase">Global AgentOps Command</p>
-                </div>
+        <div class="flex items-center gap-4">
+            <img src="logo-w1.png" class="h-10 w-auto object-contain" onerror="this.style.display='none'">
+            <div>
+                <h1 class="text-xl font-black header-font text-white">PYHGOSHIFT</h1>
+                <p class="text-[9px] text-blue-400 font-bold tracking-widest">LIVE INFRA MONITORING</p>
             </div>
         </div>
-        <div class="flex gap-8">
-            <div class="text-right">
-                <p class="text-[9px] text-zinc-500 font-mono">ENCRYPTION</p>
-                <p class="text-xs font-bold text-white">AES-256 BIT</p>
-            </div>
-            <div class="text-right">
-                <p class="text-[9px] text-zinc-500 font-mono">SECURE LINK</p>
-                <p class="text-xs font-bold text-green-500">ACTIVE</p>
-            </div>
-        </div>
+        <div id="sys-clock" class="text-xs font-mono text-zinc-500"></div>
     </header>
 
     <div class="flex-1 flex overflow-hidden">
-        
-        <aside class="w-72 monitor-panel border-r border-zinc-800 p-4 flex flex-col">
-            <h2 class="text-xs font-black text-blue-500 mb-4 flex items-center gap-2 tracking-widest uppercase">
-                <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
-                Infra Monitoring
-            </h2>
-            <div class="flex-1 space-y-2 font-mono text-[11px]">
-                <div class="flex justify-between p-2 border-b border-zinc-900">
-                    <span class="text-zinc-400">01 Cloudflare Worker</span><span class="status-ok">ONLINE</span>
+        <aside class="w-72 monitor-panel border-r border-zinc-800 p-4 space-y-2">
+            <h2 class="text-[10px] font-black text-blue-500 mb-4 tracking-widest uppercase italic">Real-time Telemetry</h2>
+            <div class="space-y-3 font-mono text-[11px]">
+                <div class="flex justify-between border-b border-zinc-900 pb-1">
+                    <span class="text-zinc-500">Worker Engine</span>
+                    <span id="stat-worker" class="status-val text-zinc-600">CHECKING...</span>
                 </div>
-                <div class="flex justify-between p-2 border-b border-zinc-900">
-                    <span class="text-zinc-400">02 R2 Storage (Bucket)</span><span class="status-ok">STABLE</span>
+                <div class="flex justify-between border-b border-zinc-900 pb-1">
+                    <span class="text-zinc-500">AI Neural Link</span>
+                    <span id="stat-ai" class="status-val text-zinc-600">CHECKING...</span>
                 </div>
-                <div class="flex justify-between p-2 border-b border-zinc-900">
-                    <span class="text-zinc-400">03 NVIDIA AI Engine</span><span class="status-ok">CONNECTED</span>
+                <div class="flex justify-between border-b border-zinc-900 pb-1">
+                    <span class="text-zinc-500">Latency (RTT)</span>
+                    <span id="stat-latency" class="status-val text-zinc-600">--ms</span>
                 </div>
-                <div class="flex justify-between p-2 border-b border-zinc-900">
-                    <span class="text-zinc-400">04 GitHub Pages</span><span class="status-ok">DEPLOYED</span>
+                <div class="flex justify-between border-b border-zinc-900 pb-1">
+                    <span class="text-zinc-500">R2 Storage</span><span class="text-green-500 font-bold">STABLE</span>
                 </div>
-                <div class="flex justify-between p-2 border-b border-zinc-900">
-                    <span class="text-zinc-400">05 CORS Policy</span><span class="status-ok">PERMITTED</span>
-                </div>
-                <div class="flex justify-between p-2 border-b border-zinc-900">
-                    <span class="text-zinc-400">06 SSL/TLS Certificate</span><span class="status-ok">VALID</span>
-                </div>
-                <div class="flex justify-between p-2 border-b border-zinc-900">
-                    <span class="text-zinc-400">07 KV Database Link</span><span class="status-ok">SYNCED</span>
-                </div>
-                <div class="flex justify-between p-2 border-b border-zinc-900">
-                    <span class="text-zinc-400">08 Agent Brain (Kimi)</span><span class="status-ok">READY</span>
-                </div>
-                <div class="flex justify-between p-2 border-b border-zinc-900">
-                    <span class="text-zinc-400">09 API Key Integrity</span><span class="status-ok">SECURED</span>
-                </div>
-                <div class="flex justify-between p-2 border-b border-zinc-900">
-                    <span class="text-zinc-400">10 Neural Latency</span><span class="status-ok">18ms</span>
+                <div class="flex justify-between border-b border-zinc-900 pb-1">
+                    <span class="text-zinc-500">CORS Policy</span><span class="text-green-500 font-bold">ACTIVE</span>
                 </div>
             </div>
         </aside>
 
-        <main class="flex-1 flex flex-col">
-            <div id="chat-window" class="flex-1 overflow-y-auto p-8 space-y-6 bg-[#020202]">
-                <div class="p-4 border border-blue-900/30 bg-blue-950/10 rounded text-[11px] text-blue-300 font-mono">
-                    <p>> SYSTEM: ALL SYSTEMS OPERATIONAL.</p>
-                    <p>> LOGO: logo-w1.png LOADED SUCCESSFULLY.</p>
-                    <p>> PROTOCOL: 7 PARKS MASTER REPOSITORY SYNCED.</p>
-                </div>
-            </div>
-
-            <div class="p-6 monitor-panel border-t border-zinc-800">
-                <div class="max-w-4xl mx-auto flex gap-3">
-                    <input type="text" id="user-input" 
-                        class="flex-1 bg-zinc-900 border-2 border-zinc-700 rounded-lg p-4 text-white font-bold focus:border-blue-500 outline-none transition-all"
-                        placeholder="사령관의 명령을 입력하십시오...">
-                    <button id="send-btn" 
-                        class="bg-white text-black px-8 py-4 rounded-lg font-black hover:bg-blue-400 transition-all uppercase header-font text-sm">
-                        SEND
-                    </button>
+        <main class="flex-1 flex flex-col bg-black">
+            <div id="chat-window" class="flex-1 overflow-y-auto p-6 space-y-4 text-sm scroll-hide"></div>
+            <div class="p-6 border-t border-zinc-800 bg-zinc-900/30">
+                <div class="flex gap-3">
+                    <input type="text" id="user-input" class="flex-1 bg-black border border-zinc-700 rounded p-3 text-white outline-none focus:border-blue-500" placeholder="명령 입력...">
+                    <button id="send-btn" class="bg-white text-black px-6 py-2 rounded font-black header-font text-xs">SEND</button>
                 </div>
             </div>
         </main>
-
-        <aside class="w-72 monitor-panel border-l border-zinc-800 p-4">
-            <h2 class="text-xs font-black text-zinc-500 mb-4 tracking-widest uppercase">7 Parks Specialists</h2>
-            <div class="space-y-3">
-                <div class="expert-card active p-3 rounded-r bg-zinc-900/50">
-                    <p class="text-[10px] font-bold text-blue-400">@Blueprint</p>
-                    <p class="text-[11px] text-white font-bold">전략/설계 총괄</p>
-                </div>
-                <div class="expert-card p-3 rounded-r opacity-40">
-                    <p class="text-[10px] font-bold text-zinc-500">@CodeGen</p>
-                    <p class="text-[11px] text-zinc-300">시스템 아키텍트</p>
-                </div>
-                <div class="expert-card p-3 rounded-r opacity-40">
-                    <p class="text-[10px] font-bold text-zinc-500">@Reflector</p>
-                    <p class="text-[11px] text-zinc-300">품질/비판 분석</p>
-                </div>
-                <div class="expert-card p-3 rounded-r opacity-40">
-                    <p class="text-[10px] font-bold text-zinc-500">@Infiltrator</p>
-                    <p class="text-[11px] text-zinc-300">시장 침투/영업</p>
-                </div>
-                <div class="expert-card p-3 rounded-r opacity-40">
-                    <p class="text-[10px] font-bold text-zinc-500">@Guardian</p>
-                    <p class="text-[11px] text-zinc-300">보안/인프라 관리</p>
-                </div>
-                <div class="expert-card p-3 rounded-r opacity-40">
-                    <p class="text-[10px] font-bold text-zinc-500">@Optimist</p>
-                    <p class="text-[11px] text-zinc-300">사용자 경험(UX)</p>
-                </div>
-                <div class="expert-card p-3 rounded-r opacity-40">
-                    <p class="text-[10px] font-bold text-zinc-500">@DataMiner</p>
-                    <p class="text-[11px] text-zinc-300">데이터 통계/분석</p>
-                </div>
-            </div>
-        </aside>
     </div>
 
     <script>
+        const workerUrl = 'https://moltbot-sandbox.pyhgoshift.workers.dev';
+        
+        // [정석] 실시간 모니터링 데이터 업데이트 함수
+        async function updateMetrics() {
+            const start = Date.now();
+            try {
+                const res = await fetch(`${workerUrl}/health`);
+                const data = await res.json();
+                const rtt = Date.now() - start;
+
+                document.getElementById('stat-worker').innerText = data.worker;
+                document.getElementById('stat-worker').className = 'status-val text-green-500';
+                document.getElementById('stat-ai').innerText = data.nvidia;
+                document.getElementById('stat-ai').className = data.nvidia === 'CONNECTED' ? 'status-val text-green-500' : 'status-val text-red-500';
+                document.getElementById('stat-latency').innerText = `${rtt}ms`;
+                document.getElementById('stat-latency').className = rtt < 200 ? 'status-val text-green-500' : 'status-val text-yellow-500';
+            } catch (e) {
+                document.getElementById('stat-worker').innerText = 'OFFLINE';
+                document.getElementById('stat-worker').className = 'status-val text-red-500';
+            }
+        }
+
+        // 5초마다 인프라 체크
+        setInterval(updateMetrics, 5000);
+        updateMetrics();
+
+        // 시계 업데이트
+        setInterval(() => {
+            document.getElementById('sys-clock').innerText = new Date().toLocaleString();
+        }, 1000);
+
+        // 메시지 전송 로직 (기존과 동일하되 시각적 최적화)
         const chat = document.getElementById('chat-window');
         const input = document.getElementById('user-input');
         const btn = document.getElementById('send-btn');
@@ -155,42 +102,34 @@
         async function dispatch() {
             const val = input.value.trim();
             if(!val) return;
-
-            const uDiv = document.createElement('div');
-            uDiv.className = 'flex flex-col items-end';
-            uDiv.innerHTML = `<p class="text-[9px] text-zinc-600 mb-1">COMMANDER</p><div class="bg-zinc-800 p-4 rounded-l-xl rounded-tr-xl text-white font-bold text-sm border border-zinc-700">${val}</div>`;
-            chat.appendChild(uDiv);
-            
+            appendMsg('COMMANDER', val, false);
             input.value = '';
-            
-            const aDiv = document.createElement('div');
-            aDiv.className = 'flex flex-col items-start';
-            aDiv.innerHTML = `<p class="text-[9px] text-blue-500 mb-1 font-bold">7 PARKS ENGINE</p><div class="bg-blue-950/20 p-5 rounded-r-xl rounded-bl-xl text-white text-sm leading-relaxed border-l-4 border-blue-500 shadow-2xl min-w-[200px]">분석 중...</div>`;
-            chat.appendChild(aDiv);
-            const content = aDiv.querySelector('div');
-            chat.scrollTop = chat.scrollHeight;
+            const aiBox = appendMsg('7 PARKS', 'analyzing...', true);
 
             try {
-                const res = await fetch('https://moltbot-sandbox.pyhgoshift.workers.dev/ask', {
+                const res = await fetch(`${workerUrl}/ask`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ question: val })
                 });
-
                 const reader = res.body.getReader();
                 const decoder = new TextDecoder();
-                content.innerText = '';
-
+                aiBox.innerText = '';
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
-                    content.innerText += decoder.decode(value, { stream: true });
+                    aiBox.innerText += decoder.decode(value, { stream: true });
                     chat.scrollTop = chat.scrollHeight;
                 }
-            } catch (e) {
-                content.innerText = "통신 장애: " + e.message;
-                content.className += " text-red-500 font-bold";
-            }
+            } catch (e) { aiBox.innerText = "Error: " + e.message; }
+        }
+
+        function appendMsg(role, text, isAi) {
+            const div = document.createElement('div');
+            div.className = isAi ? 'text-blue-400' : 'text-zinc-100 font-bold';
+            div.innerHTML = `<span class="text-[10px] opacity-50">[${role}]</span> ${text}`;
+            chat.appendChild(div);
+            return div;
         }
 
         btn.onclick = dispatch;
