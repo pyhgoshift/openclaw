@@ -1,99 +1,53 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PyhgoShift | OS OpenClaw V5.0</title>
+    <title>PyhgoShift | OS OpenClaw V5.2</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --neon-blue: #00d9ff;
-            --neon-green: #00ff41;
-            --bg-black: #000000;
-        }
-
-        body {
-            background: var(--bg-black);
-            color: #ffffff;
-            font-family: 'Noto Sans KR', sans-serif;
-            overflow: hidden;
-        }
-
-        .monitor-panel {
-            background: rgba(10, 10, 10, 0.98);
-            border: 1px solid #222;
-        }
-
-        .header-font {
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        .expert-card {
-            border-left: 3px solid #333;
-            transition: all 0.3s;
-            background: rgba(255, 255, 255, 0.01);
-        }
-
-        .expert-active {
-            border-left-color: var(--neon-blue);
-            background: rgba(0, 217, 255, 0.05);
-        }
-
-        .scroll-hide::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .scroll-hide::-webkit-scrollbar-thumb {
-            background: #222;
-            border-radius: 10px;
-        }
+        :root { --neon-blue: #00d9ff; --bg-black: #000000; }
+        body { background: var(--bg-black); color: #ffffff; font-family: 'Noto Sans KR', sans-serif; overflow: hidden; }
+        .monitor-panel { background: rgba(10, 10, 10, 0.98); border: 1px solid #222; }
+        .header-font { font-family: 'Orbitron', sans-serif; }
+        .expert-card { border-left: 3px solid #333; transition: all 0.3s; background: rgba(255,255,255,0.01); }
+        .expert-active { border-left-color: var(--neon-blue); background: rgba(0, 217, 255, 0.1); box-shadow: inset 5px 0 10px rgba(0, 217, 255, 0.1); }
+        .scroll-hide::-webkit-scrollbar { width: 4px; }
+        .scroll-hide::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        @keyframes pulse-blue { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .thinking { animation: pulse-blue 1.5s infinite; color: var(--neon-blue); font-weight: bold; }
     </style>
 </head>
-
 <body class="h-screen flex flex-col">
-    <header class="p-4 monitor-panel border-b border-zinc-800 flex justify-between items-center shadow-xl">
+    <header class="p-4 monitor-panel border-b border-zinc-800 flex justify-between items-center shadow-2xl">
         <div class="flex items-center gap-4">
             <div class="h-10 w-10 bg-white flex items-center justify-center rounded-sm">
-                <img src="https://raw.githubusercontent.com/freudpark/pyhgoshift/main/logo-p1.png" alt="PS"
-                    onerror="this.parentElement.innerHTML='<span class=\'text-black font-black\'>PS</span>'">
+                <img src="https://raw.githubusercontent.com/freudpark/pyhgoshift/main/logo-w1.png" alt="PS" onerror="this.parentElement.innerHTML='<span class=\'text-black font-black\'>PS</span>'">
             </div>
             <div>
                 <h1 class="text-xl font-black header-font text-white leading-none tracking-tighter">PYHGOSHIFT</h1>
-                <p class="text-[8px] text-blue-500 font-bold tracking-[0.2em] uppercase mt-1">Cognitive OS OpenClaw</p>
+                <p class="text-[8px] text-blue-500 font-bold tracking-[0.2em] uppercase mt-1">Cognitive OS OpenClaw V5.2</p>
             </div>
         </div>
-        <div id="sys-clock" class="text-[10px] font-mono text-zinc-600"></div>
+        <div id="sys-clock" class="text-[10px] font-mono text-zinc-600 uppercase tracking-widest"></div>
     </header>
 
     <div class="flex-1 flex overflow-hidden">
         <aside class="w-64 monitor-panel border-r border-zinc-800 p-4 flex flex-col">
             <div class="flex-1">
-                <h2 class="text-[9px] font-black text-blue-500 mb-4 tracking-widest uppercase italic">Infra Status</h2>
+                <h2 class="text-[9px] font-black text-blue-500 mb-4 tracking-widest uppercase italic">Infrastructure</h2>
                 <div class="space-y-3 font-mono text-[10px]">
-                    <div class="flex justify-between border-b border-zinc-900 pb-1"><span>Worker</span><span
-                            id="stat-worker" class="text-zinc-700 font-bold">--</span></div>
-                    <div class="flex justify-between border-b border-zinc-900 pb-1"><span>AI Link</span><span
-                            id="stat-ai" class="text-zinc-700 font-bold">--</span></div>
-                    <div class="flex justify-between border-b border-zinc-900 pb-1"><span>Latency</span><span
-                            id="stat-latency" class="text-zinc-700 font-bold">--</span></div>
+                    <div class="flex justify-between border-b border-zinc-900 pb-1"><span>Worker</span><span id="stat-worker" class="text-zinc-700 font-bold">--</span></div>
+                    <div class="flex justify-between border-b border-zinc-900 pb-1"><span>AI Link</span><span id="stat-ai" class="text-zinc-700 font-bold">--</span></div>
+                    <div class="flex justify-between border-b border-zinc-900 pb-1"><span>Latency</span><span id="stat-latency" class="text-zinc-700 font-bold">--</span></div>
                 </div>
             </div>
-
             <div class="border-t border-zinc-900 pt-6">
                 <h2 class="text-[9px] font-black text-yellow-600 mb-3 tracking-widest uppercase">Cost Control</h2>
                 <div class="space-y-3 font-mono text-[10px]">
-                    <div class="flex justify-between border-b border-zinc-900 pb-1 text-zinc-500"><span>CF
-                            Plan</span><span class="text-white">$5/Mo</span></div>
-                    <div class="flex justify-between border-b border-zinc-900 pb-1 text-zinc-500">
-                        <span>Tokens</span><span id="stat-tokens" class="text-blue-400">0 tkn</span>
-                    </div>
-                    <div class="flex justify-between border-b border-zinc-900 pb-1 text-zinc-500">
-                        <span>Estimated</span><span class="text-white">$0.00</span>
-                    </div>
+                    <div class="flex justify-between border-b border-zinc-900 pb-1 text-zinc-500"><span>Plan</span><span class="text-white">$5/Mo FIXED</span></div>
+                    <div class="flex justify-between border-b border-zinc-900 pb-1 text-zinc-500"><span>Session</span><span id="stat-tokens" class="text-blue-400">0 tkn</span></div>
                 </div>
             </div>
         </aside>
@@ -102,17 +56,14 @@
             <div id="chat-window" class="flex-1 overflow-y-auto p-8 space-y-6 text-sm scroll-hide"></div>
             <div class="p-6 monitor-panel border-t border-zinc-800">
                 <div class="max-w-4xl mx-auto flex gap-3">
-                    <input type="text" id="user-input"
-                        class="flex-1 bg-zinc-900 border border-zinc-800 rounded-lg p-4 text-white outline-none focus:border-blue-500 transition-all font-medium"
-                        placeholder="������ �Է��Ͻʽÿ�...">
-                    <button id="send-btn"
-                        class="bg-white text-black px-10 py-4 rounded-lg font-black header-font text-xs hover:bg-blue-400">DISPATCH</button>
+                    <input type="text" id="user-input" class="flex-1 bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 text-white outline-none focus:border-blue-500 transition-all" placeholder="명령을 입력하십시오...">
+                    <button id="send-btn" class="bg-white text-black px-10 py-4 rounded-lg font-black header-font text-xs">DISPATCH</button>
                 </div>
             </div>
         </main>
 
-        <aside class="w-64 monitor-panel border-l border-zinc-800 p-4 overflow-y-auto scroll-hide">
-            <h2 class="text-[9px] font-black text-zinc-600 mb-4 tracking-widest uppercase">Agent Pool</h2>
+        <aside class="w-64 monitor-panel border-l border-zinc-800 p-4">
+            <h2 class="text-[9px] font-black text-zinc-600 mb-4 tracking-widest uppercase">Specialist Pool</h2>
             <div id="expert-list" class="space-y-2"></div>
         </aside>
     </div>
@@ -120,27 +71,24 @@
     <script>
         const endpoint = 'https://moltbot-sandbox.pyhgoshift.workers.dev';
         const experts = ['Blueprint', 'CodeGen', 'Reflector', 'Infiltrator', 'Guardian', 'Optimist', 'DataMiner'];
-        let totalTokens = 0;
-
+        
         function initUI() {
             document.getElementById('expert-list').innerHTML = experts.map(n => `
                 <div class="expert-card p-3 rounded-r opacity-20" id="exp-${n}">
                     <p class="text-[8px] font-bold text-blue-500">@${n}</p>
-                    <p class="text-white font-bold uppercase tracking-tighter">${n} Active</p>
+                    <p class="text-white font-bold uppercase tracking-tighter">${n} Ready</p>
                 </div>
             `).join('');
         }
 
         async function checkHealth() {
             try {
-                const start = Date.now();
                 const res = await fetch(`${endpoint}/health`);
                 const data = await res.json();
                 document.getElementById('stat-worker').innerText = 'ONLINE';
                 document.getElementById('stat-worker').className = 'text-green-500 font-bold';
                 document.getElementById('stat-ai').innerText = data.nvidia;
                 document.getElementById('stat-ai').className = 'text-green-500 font-bold';
-                document.getElementById('stat-latency').innerText = `${Date.now() - start}ms`;
                 experts.forEach(n => document.getElementById(`exp-${n}`).classList.add('expert-active', 'opacity-100'));
             } catch (e) { document.getElementById('stat-worker').innerText = 'ERROR'; }
         }
@@ -151,10 +99,12 @@
 
         async function dispatch() {
             const val = input.value.trim();
-            if (!val) return;
+            if(!val) return;
             appendMsg('COMMANDER', val, false);
             input.value = '';
-            const aiBox = appendMsg('7 PARKS', '...', true);
+            
+            // [식별 보완] 생각 중임을 알리는 애니메이션 메시지
+            const aiBox = appendMsg('7 PARKS', '<span class="thinking"> 분석 중... 전문가를 소환하고 있습니다.</span>', true);
 
             try {
                 const response = await fetch(`${endpoint}/ask`, {
@@ -165,28 +115,32 @@
 
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
-                aiBox.innerText = '';
+                let firstChunk = true;
 
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
+                    
+                    if (firstChunk) { 
+                        aiBox.innerText = ''; // 첫 데이터가 오면 "분석 중" 문구를 지웁니다.
+                        firstChunk = false;
+                    }
+
                     const chunk = decoder.decode(value);
                     const lines = chunk.split('\n');
-
                     for (const line of lines) {
                         if (line.startsWith('data: ')) {
                             const dataStr = line.replace('data: ', '').trim();
                             if (dataStr === '[DONE]') break;
                             try {
                                 const json = JSON.parse(dataStr);
-                                if (if (json.usage) { totalTokens = json.usage.total_tokens; document.getElementById("stat-tokens").innerText = totalTokens + " tkn"; }) { // ��뷮 ���� ����
-                                    totalTokens += if (json.usage) { totalTokens = json.usage.total_tokens; document.getElementById("stat-tokens").innerText = totalTokens + " tkn"; }.total_tokens;
-                                    document.getElementById('stat-tokens').innerText = `${totalTokens.toLocaleString()} tkn`;
+                                if (json.usage) {
+                                    document.getElementById('stat-tokens').innerText = `${json.usage.total_tokens.toLocaleString()} tkn`;
                                 }
                                 const content = json.choices[0]?.delta?.content || '';
                                 aiBox.innerText += content;
                                 chat.scrollTop = chat.scrollHeight;
-                            } catch (e) { }
+                            } catch (e) {}
                         }
                     }
                 }
@@ -195,8 +149,8 @@
 
         function appendMsg(role, text, isAi) {
             const div = document.createElement('div');
-            div.className = isAi ? 'bg-zinc-900/50 p-6 border-l-2 border-blue-500 text-zinc-200 leading-relaxed shadow-lg' : 'text-right p-2 text-zinc-500 text-[10px]';
-            div.innerHTML = `<span class="text-[8px] block opacity-40 uppercase mb-3 font-black tracking-widest">${role}</span><span>${text}</span>`;
+            div.className = isAi ? 'bg-zinc-900/40 p-6 border-l-2 border-blue-500 text-zinc-200' : 'text-right p-2 text-zinc-500 text-[10px]';
+            div.innerHTML = `<span class="text-[8px] block opacity-40 uppercase mb-2 font-black tracking-widest">${role}</span><span>${text}</span>`;
             chat.appendChild(div);
             chat.scrollTop = chat.scrollHeight;
             return div.querySelector('span:last-child');
@@ -207,8 +161,7 @@
         checkHealth();
         setInterval(() => { document.getElementById('sys-clock').innerText = new Date().toLocaleString(); }, 1000);
         btn.onclick = dispatch;
-        input.onkeypress = (e) => { if (e.key === 'Enter') dispatch(); };
+        input.onkeypress = (e) => { if(e.key==='Enter') dispatch(); };
     </script>
 </body>
-
 </html>
