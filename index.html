@@ -3,50 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PyhgoShift | AgentOps Command Center</title>
+    <title>PyhgoShift | 에이전트 작전 본부</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+KR:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        body { background: #050505; color: #00ff41; font-family: 'Fira Code', monospace; }
-        .glass { background: rgba(15, 15, 15, 0.8); backdrop-blur: 10px; border: 1px solid #1a1a1a; }
-        .neon-border { border: 1px solid #00ff41; box-shadow: 0 0 10px rgba(0, 255, 65, 0.2); }
-        .terminal-scroll::-webkit-scrollbar { width: 4px; }
-        .terminal-scroll::-webkit-scrollbar-thumb { background: #333; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #00ff41; animation: pulse 2s infinite; }
+        :root { --neon-cyan: #00f2ff; --neon-green: #00ff41; --bg-dark: #050505; }
+        body { 
+            background-color: var(--bg-dark); 
+            color: #e0e0e0; 
+            font-family: 'Noto Sans KR', sans-serif;
+            background-image: radial-gradient(circle at 50% 50%, #111 0%, #050505 100%);
+        }
+        .header-font { font-family: 'Orbitron', sans-serif; }
+        .glass-panel { background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(10px); border: 1px solid #333; }
+        .neon-text { color: var(--neon-cyan); text-shadow: 0 0 8px rgba(0, 242, 255, 0.5); }
+        .status-active { color: var(--neon-green); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .scroll-hide::-webkit-scrollbar { width: 4px; }
+        .scroll-hide::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
-    <header class="p-4 glass border-b border-zinc-800 flex justify-between items-center">
-        <div class="flex items-center gap-3">
-            <div class="status-dot"></div>
-            <h1 class="text-sm font-bold tracking-widest text-zinc-400">PYHGOSHIFT <span class="text-white">AGENT OPS</span></h1>
-        </div>
-        <div class="text-[10px] text-zinc-500">SYSTEM: v2.5.4 | SECURE_LINK: ACTIVE</div>
-    </header>
 
-    <main id="chat-window" class="flex-1 overflow-y-auto p-6 space-y-6 terminal-scroll bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-900/20 via-black to-black">
-        <div class="text-[10px] text-zinc-600 mb-8 border-b border-zinc-900 pb-2">
-            [SYS] INITIALIZING CORE ENGINE... DONE<br>
-            [SYS] ESTABLISHING NEURAL LINK... READY<br>
-            [SYS] 7 PARKS PROTOCOL LOADED.
-        </div>
-    </main>
-
-    <footer class="p-6 glass border-t border-zinc-800">
-        <div class="max-w-6xl mx-auto">
-            <div class="relative flex items-center">
-                <span class="absolute left-4 text-emerald-500 font-bold">>></span>
-                <input type="text" id="user-input" 
-                    class="w-full bg-black/50 border border-zinc-800 rounded-lg py-4 pl-12 pr-32 text-emerald-400 focus:outline-none focus:border-emerald-500 transition-all text-sm"
-                    placeholder="명령을 하달하십시오 (Enter to dispatch)...">
-                <button id="send-btn" 
-                    class="absolute right-2 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-500 border border-emerald-600/30 px-6 py-2 rounded-md text-xs font-bold transition-all uppercase tracking-tighter">
-                    Dispatch
-                </button>
+    <header class="p-4 glass-panel border-b border-cyan-900/30 flex justify-between items-center shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+        <div class="flex items-center gap-4">
+            <div class="w-10 h-10 border-2 border-cyan-500 flex items-center justify-center font-bold text-cyan-500 header-font bg-cyan-500/10 shadow-[0_0_10px_rgba(0,242,255,0.3)]">PS</div>
+            <div>
+                <h1 class="text-lg font-bold tracking-widest neon-text header-font leading-none">PYHGOSHIFT</h1>
+                <p class="text-[10px] text-zinc-500 mt-1 uppercase tracking-tighter">에이전트나 작전 본부 | 통신 보안 등급: 1급</p>
             </div>
         </div>
-    </footer>
+        <div class="flex gap-6 text-[11px] font-mono">
+            <div class="text-right">
+                <p class="text-zinc-500">SYSTEM STATUS</p>
+                <p class="status-active font-bold"> V2.5.4 ACTIVE</p>
+            </div>
+            <div class="text-right border-l border-zinc-800 pl-6">
+                <p class="text-zinc-500">SECURE LINK</p>
+                <p class="text-cyan-400 font-bold">ENCRYPTED</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex-1 flex overflow-hidden">
+        
+        <aside class="w-64 border-r border-zinc-900 p-4 space-y-4 bg-black/40 hidden lg:block">
+            <h2 class="text-[10px] text-zinc-600 font-bold uppercase mb-4 tracking-widest">분야별 전문가 현황</h2>
+            <div class="space-y-2 text-xs">
+                <div class="p-3 border border-zinc-800 rounded bg-zinc-900/30 flex justify-between items-center">
+                    <span class="text-zinc-400">@Blueprint</span>
+                    <span class="text-[8px] px-1 bg-cyan-900/50 text-cyan-400 border border-cyan-800">READY</span>
+                </div>
+                <div class="p-3 border border-zinc-800 rounded bg-zinc-900/30 flex justify-between items-center opacity-50">
+                    <span class="text-zinc-400">@CodeGen</span>
+                    <span class="text-[8px] px-1 bg-zinc-800 text-zinc-500 border border-zinc-700">STANDBY</span>
+                </div>
+                <div class="p-3 border border-zinc-800 rounded bg-zinc-900/30 flex justify-between items-center opacity-50">
+                    <span class="text-zinc-400">@Reflector</span>
+                    <span class="text-[8px] px-1 bg-zinc-800 text-zinc-500 border border-zinc-700">STANDBY</span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]">
+            <div id="chat-window" class="flex-1 overflow-y-auto p-8 space-y-6 scroll-hide">
+                <div class="text-[11px] text-zinc-700 font-mono space-y-1 p-4 border border-zinc-900/50 rounded bg-black/20">
+                    <p>[시스템] 코어 엔진 초기화... 완료</p>
+                    <p>[시스템] 신경망 링크 수립... 준비됨</p>
+                    <p>[시스템] 7 PARKS 프로토콜 로드 완료.</p>
+                </div>
+            </div>
+
+            <div class="p-8 border-t border-zinc-900 bg-black/60">
+                <div class="max-w-4xl mx-auto relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-cyan-900 to-blue-900 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+                    <div class="relative flex items-center bg-zinc-950 rounded-lg border border-zinc-800">
+                        <span class="pl-4 text-cyan-600 font-bold header-font">>></span>
+                        <input type="text" id="user-input" 
+                            class="w-full bg-transparent py-5 pl-4 pr-32 text-cyan-50 focus:outline-none text-sm placeholder:text-zinc-700"
+                            placeholder="명령을 하달하십시오 (Enter 입력 시 전송)...">
+                        <button id="send-btn" 
+                            class="absolute right-2 bg-cyan-600 hover:bg-cyan-500 text-black px-6 py-2 rounded font-bold text-xs transition-all uppercase header-font">
+                            DISPATCH
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 
     <script>
         const chat = document.getElementById('chat-window');
@@ -55,15 +99,17 @@
 
         function appendLog(role, text, isAi = false) {
             const container = document.createElement('div');
-            container.className = isAi ? 'max-w-4xl' : 'max-w-4xl ml-auto text-right';
+            container.className = isAi ? 'flex flex-col items-start' : 'flex flex-col items-end';
             
             const header = document.createElement('div');
-            header.className = 'text-[10px] uppercase tracking-widest mb-1 text-zinc-600';
+            header.className = 'text-[9px] uppercase tracking-widest mb-1 text-zinc-600 font-mono';
             header.innerText = `[${role}] ${new Date().toLocaleTimeString()}`;
             
             const msg = document.createElement('div');
-            msg.className = isAi ? 'p-4 glass rounded-r-xl rounded-bl-xl border-l-2 border-emerald-500 text-zinc-300 text-sm leading-relaxed' 
-                               : 'p-3 bg-zinc-900/50 rounded-l-xl rounded-tr-xl border-r-2 border-zinc-700 text-zinc-400 text-sm inline-block';
+            msg.className = isAi 
+                ? 'max-w-2xl p-5 bg-zinc-900/80 border-l-4 border-cyan-500 rounded-r-lg rounded-bl-lg text-zinc-300 text-sm leading-relaxed shadow-lg' 
+                : 'max-w-xl p-4 bg-cyan-950/20 border border-cyan-900/30 rounded-l-lg rounded-tr-lg text-cyan-100 text-sm shadow-inner';
+            
             msg.innerText = text;
             
             container.appendChild(header);
@@ -77,10 +123,10 @@
             const val = input.value.trim();
             if(!val) return;
 
-            appendLog('Commander', val, false);
+            appendLog('사령관', val, false);
             input.value = '';
             
-            const aiMsgBox = appendLog('7 Parks Engine', 'ACCESSING KNOWLEDGE BASE...', true);
+            const aiMsgBox = appendLog('에이전트 엔진', '데이터 분석 중...', true);
             
             try {
                 const res = await fetch('https://moltbot-sandbox.pyhgoshift.workers.dev/ask', {
@@ -89,24 +135,23 @@
                     body: JSON.stringify({ question: val })
                 });
 
-                if (!res.ok) throw new Error(`ERR_CODE: ${res.status}`);
+                if (!res.ok) throw new Error(`통신 오류: ${res.status}`);
 
                 const reader = res.body.getReader();
                 const decoder = new TextDecoder();
-                aiMsgBox.innerText = ''; // 초기화
+                aiMsgBox.innerText = ''; 
 
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
                     
                     const chunk = decoder.decode(value, { stream: true });
-                    // 스트리밍 데이터 출력
                     aiMsgBox.innerText += chunk;
                     chat.scrollTop = chat.scrollHeight;
                 }
             } catch (e) {
-                aiMsgBox.className = 'p-4 glass rounded-xl border-l-2 border-red-500 text-red-400 text-xs';
-                aiMsgBox.innerText = `CRITICAL_ERROR: ${e.message}\n> 브라우저 사이트 설정에서 '안전하지 않은 콘텐츠' 허용을 확인하십시오.`;
+                aiMsgBox.className = 'p-4 bg-red-950/20 border border-red-900/50 rounded-lg text-red-400 text-xs font-mono';
+                aiMsgBox.innerText = `[치명적 오류] 시스템 로그: ${e.message}\n\n해결책: 브라우저 자물쇠 설정에서 '안전하지 않은 콘텐츠' 허용 여부를 확인하십시오.`;
             }
         }
 
