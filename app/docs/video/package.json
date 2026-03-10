@@ -1,0 +1,27 @@
+{
+    "name": "remotion-video",
+    "version": "1.0.0",
+    "description": "A Remotion video project",
+    "scripts": {
+        "start": "remotion studio",
+        "build": "remotion render",
+        "upgrade": "remotion upgrade",
+        "test": "vitest"
+    },
+    "dependencies": {
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "remotion": "4.0.122",
+        "zod": "^3.22.4",
+        "three": "^0.160.0",
+        "@react-three/fiber": "^8.15.14",
+        "@react-three/drei": "^9.96.1"
+    },
+    "devDependencies": {
+        "@types/react": "^18.2.48",
+        "@types/three": "^0.160.0",
+        "@types/web": "^0.0.136",
+        "typescript": "^5.3.3",
+        "vite": "^5.0.12"
+    }
+}

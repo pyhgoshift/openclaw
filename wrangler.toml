@@ -1,0 +1,12 @@
+name = "pyhgoshift"
+main = "app/api/src/index.ts"
+compatibility_date = "2024-09-23"
+[[durable_objects.bindings]]
+name = "SandboxContainer"
+class_name = "SandboxContainer"
+[[migrations]]
+tag = "v1"
+new_classes = ["SandboxContainer"]
+[[r2_buckets]]
+binding = "MASTER_STORAGE"
+bucket_name = "pyhgoshift-master-skills"

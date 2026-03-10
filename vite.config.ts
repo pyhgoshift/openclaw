@@ -3,11 +3,12 @@ import react from "@vitejs/plugin-react"
 import { cloudflare } from "@cloudflare/vite-plugin"
 
 export default defineConfig({
+	root: "app/web",
 	base: "/_admin/",
 	plugins: [
 		react(),
 		cloudflare({
-			configPath: "./wrangler.jsonc",
+			configPath: "../../wrangler.jsonc",
 			persistState: false,
 		}),
 	],

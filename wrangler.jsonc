@@ -1,24 +1,41 @@
 ﻿{
   "name": "moltbot-sandbox",
-  "main": "src/index.ts",
-  "compatibility_date": "2024-04-03",
-  "compatibility_flags": ["nodejs_compat"],
+  "main": "app/api/src/index.ts",
+  "compatibility_date": "2024-09-23",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
   "durable_objects": {
     "bindings": [
-      { "name": "MOLT_SANDBOX", "class_name": "SandboxContainer" }
+      {
+        "name": "MOLT_SANDBOX",
+        "class_name": "SandboxContainer"
+      }
     ]
   },
   "migrations": [
     {
       "tag": "v2026_final_purge_all",
-      "deleted_classes": ["Sandbox", "SandboxContainer"]
+      "deleted_classes": [
+        "Sandbox",
+        "SandboxContainer"
+      ]
     },
     {
       "tag": "v2026_reborn_success",
-      "new_classes": ["SandboxContainer"]
+      "new_classes": [
+        "SandboxContainer"
+      ]
     }
   ],
   "r2_buckets": [
-    { "binding": "moltbot_config", "bucket_name": "moltbot-config" }
+    {
+      "binding": "moltbot_config",
+      "bucket_name": "moltbot-config"
+    },
+    {
+      "binding": "MASTER_STORAGE",
+      "bucket_name": "pyhgoshift-master-skills"
+    }
   ]
 }

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>파이고시프트(PyhgoShift) 최종 통합 사업계획서</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --accent: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+
+        header {
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border-radius: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        h1 { font-size: 3.5rem; margin-bottom: 1rem; letter-spacing: -1px; }
+        .subtitle { font-size: 1.25rem; opacity: 0.9; font-weight: 300; }
+
+        .section {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 { font-size: 2rem; margin-bottom: 2rem; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        h2::before { content: ''; width: 4px; height: 1.5rem; background: var(--primary); border-radius: 2px; }
+
+        /* 13단계 프로세스 스타일 */
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .process-card {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+
+        .process-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .step-num { font-weight: 800; color: var(--primary); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .step-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 8px; }
+        .step-desc { font-size: 0.85rem; color: #64748b; }
+
+        /* 에이전트 카드 */
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .agent-card {
+            padding: 25px;
+            border-radius: 16px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .agent-header { display: flex; align-items: center; gap: 12px; }
+        .agent-icon { width: 48px; height: 48px; border-radius: 12px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .agent-name { font-weight: 700; font-size: 1.2rem; }
+        .agent-role { font-size: 0.9rem; color: var(--secondary); font-weight: 600; }
+
+        /* 비즈니스 모델 탭 */
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 10px; }
+        .tab-btn {
+            padding: 12px 24px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 30px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .tab-content { display: none; animation: fadeIn 0.5s; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .manus-command {
+            background: var(--dark);
+            color: white;
+            padding: 30px;
+            border-radius: 16px;
+            border-left: 8px solid var(--accent);
+            margin-top: 20px;
+        }
+
+        .footer { text-align: center; padding: 40px; color: #64748b; font-size: 0.9rem; }
+
+        .highlight { color: var(--primary); font-weight: 700; }
+        
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-right: 5px; }
+        .badge-tool { background: #dbeafe; color: #1e40af; }
+        .badge-agent { background: #f3e8ff; color: #6b21a8; }
+
+        .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
+        .metric-item { text-align: center; padding: 20px; background: #f1f5f9; border-radius: 12px; }
+        .metric-val { font-size: 2rem; font-weight: 800; color: var(--primary); }
+        .metric-lab { font-size: 0.8rem; color: #64748b; font-weight: 600; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>파이고시프트 (PyhgoShift)</h1>
+        <p class="subtitle">AI AgentOps 기반 13단계 고도화 비즈니스 통합 모델</p>
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.8;">"기능 성공을 넘어 제품의 성공을 설계합니다"</p>
+    </header>
+
+    <!-- 01. 마누스 총지휘 사령관 & 에이전트 군단 -->
+    <section class="section">
+        <h2>01 · 마누스(Manus) 총지휘 사령관 & 에이전트 군단</h2>
+        <div class="agent-grid">
+            <div class="agent-card">
+                <div class="agent-header">
+                    <div class="agent-icon">👑</div>
+                    <div>
+                        <div class="agent-name">마누스 (Manus)</div>
+                        <div class="agent-role">총지휘 사령관</div>
+                    </div>
+                </div>
+                <p class="step-desc">모든 AI 도구와 에이전트 군단을 총괄 지휘하며, 전체 13단계 프로세스의 무결성을 보장합니다.</p>
+            </div>
+            <div class="agent-card">
+                <div class="agent-header">
+                    <div class="agent-icon">🧠</div>
+                    <div>
+                        <div class="agent-name">프로이트 박</div>
+                        <div class="agent-role">CEO | 가치 분석가</div>
+                    </div>
+                </div>
+                <p class="step-desc">"이걸 왜 만드나요?" - 비즈니스 가치와 리소스를 고려하여 가장 비싼 문제를 선정합니다.</p>
+            </div>
+            <div class="agent-card">
+                <div class="agent-header">
+                    <div class="agent-icon">🧭</div>
+                    <div>
+                        <div class="agent-name">파일럿 박</div>
+                        <div class="agent-role">CPO | 전략 설계자</div>
+                    </div>
+                </div>
+                <p class="step-desc">North Star, Kill Metric, Guardrail Metric을 정의하여 제품의 항로를 결정합니다.</p>
+            </div>
+        </div>
+        <div class="manus-command">
+            <h4 style="color: var(--accent); margin-bottom: 10px;">🎖️ 사령관의 한마디</h4>
+            <p>"실무에서 가장 비싼 비용은 잘못된 방향으로 전력 질주하는 것입니다. 우리는 코딩 전에 리스크를 먼저 제거합니다."</p>
+        </div>
+    </section>
+
+    <!-- 02. 13단계 표준 프로세스 -->
+    <section class="section">
+        <h2>02 · 13단계 고도화 개발 프로세스</h2>
+        <p style="margin-bottom: 20px; color: #64748b;">낭만코딩(@romantic_coding)의 철학을 AI AgentOps로 자동화한 파이고시프트 표준 공정입니다.</p>
+        
+        <div class="process-grid">
+            <div class="process-card">
+                <span class="step-num">Step 01. PF</span>
+                <div class="step-title">우선순위 결정</div>
+                <p class="step-desc">가장 아픈 곳(비싼 문제)을 찾아내는 기획의 첫 단추.</p>
+            </div>
+            <div class="process-card">
+                <span class="step-num">Step 02. FBS</span>
+                <div class="step-title">상세 명세</div>
+                <p class="step-desc">실패/보호 지표를 함께 정하는 진짜 실무 명세.</p>
+            </div>
+            <div class="process-card">
+                <span class="step-num">Step 03. RFD</span>
+                <div class="step-title">디자인 준비</div>
+                <p class="step-desc">매몰 비용 발생 전 제때 멈추는 용기.</p>
+            </div>
+            <div class="process-card">
+                <span class="step-num">Step 04. FBD</span>
+                <div class="step-title">UX 설계</div>
+                <p class="step-desc">유저가 헷갈리지 않는지 치열하게 검증.</p>
+            </div>
+            <div class="process-card">
+                <span class="step-num">Step 05. RFE</span>
+                <div class="step-title">엔지니어링 준비</div>
+                <p class="step-desc">90%의 변수를 잡는 까칠한 시니어 에이전트 리뷰.</p>
+            </div>
+            <div class="process-card">
+                <span class="step-num">Step 06. FUE</span>
+                <div class="step-title">구현 전쟁</div>
+                <p class="step-desc">백엔드-프론트엔드 에이전트 간의 설계 협상.</p>
+            </div>
+            <div class="process-card">
+                <span class="step-num">Step 07. RFQ</span>
+                <div class="step-title">QA 준비</div>
+                <p class="step-desc">검증을 위한 데이터 셋팅 및 환경 구축.</p>
+            </div>
+            <div class="process-card">
+                <span class="step-num">Step 08. FUQ</span>
+                <div class="step-title">QA 수행</div>
+                <p class="step-desc">엣지 케이스를 부수며 밤잠을 지켜주는 방패.</p>
+            </div>
+            <div class="process-card">
+                <span class="step-num">Step 09. RFT</span>
+                <div class="step-title">테스트 준비</div>
+                <p class="step-desc">망했을 때 되돌릴 방법(Rollback) 확보.</p>
+            </div>
+            <div class="process-card">
+                <span class="step-num">Step 10. FUT</span>
+                <div class="step-title">A/B 테스트</div>
+                <p class="step-desc">데이터의 냉정한 심판을 받는 시간.</p>
+            </div>
+            <div class="process-card">
+                <span class="step-num">Step 11. FL</span>
+                <div class="step-title">정식 출시</div>
+                <p class="step-desc">데이터가 증명된 기능의 전체 배포.</p>
+            </div>
+            <div class="process-card">
+                <span class="step-num">Step 12. FNL</span>
+                <div class="step-title">출시 미승인</div>
+                <p class="step-desc">가설이 틀리면 과감히 지우는 용기.</p>
+            </div>
+            <div class="process-card">
+                <span class="step-num">Step 13. Post-Mortem</span>
+                <div class="step-title">사후 회고</div>
+                <p class="step-desc">사람 탓이 아닌 시스템의 결함을 개선.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 03. 6대 비즈니스 모델 융합 -->
+    <section class="section">
+        <h2>03 · 융합 비즈니스 모델 실행 전략</h2>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab(event, 'm1')">스마트 서기관</button>
+            <button class="tab-btn" onclick="openTab(event, 'm2')">에너지 최적화</button>
+            <button class="tab-btn" onclick="openTab(event, 'm3')">안전 파수꾼</button>
+            <button class="tab-btn" onclick="openTab(event, 'm4')">투어 큐레이터</button>
+            <button class="tab-btn" onclick="openTab(event, 'm5')">서류 자동화</button>
+            <button class="tab-btn" onclick="openTab(event, 'm6')">보안 관제</button>
+        </div>
+
+        <div id="m1" class="tab-content active">
+            <h3>1. 소상공인 스마트 서기관</h3>
+            <div class="metrics-grid">
+                <div class="metric-item"><div class="metric-val">80%</div><div class="metric-lab">홍보 시간 단축</div></div>
+                <div class="metric-item"><div class="metric-val">30%</div><div class="metric-lab">SNS 팔로워 증가</div></div>
+                <div class="metric-item"><div class="metric-val">15%</div><div class="metric-lab">매출 상승 기대</div></div>
+            </div>
+            <p><strong>전략:</strong> <span class="badge badge-agent">프롬프트 박</span> 주도로 <strong>Step 02(FBS)</strong>에서 전환율뿐만 아니라 CS 발생률을 Guardrail로 설정. <span class="badge badge-tool">Gemini</span>로 고품질 콘텐츠 생성 후 <span class="badge badge-tool">OpenClaw</span>로 24/7 자동 배포 및 모니터링.</p>
+        </div>
+
+        <div id="m2" class="tab-content">
+            <h3>2. 지능형 에너지 비용 최적화</h3>
+            <div class="metrics-grid">
+                <div class="metric-item"><div class="metric-val">25%</div><div class="metric-lab">전기료 절감</div></div>
+                <div class="metric-item"><div class="metric-val">35%</div><div class="metric-lab">피크 전력 감소</div></div>
+                <div class="metric-item"><div class="metric-val">20M</div><div class="metric-lab">연간 절감액(KRW)</div></div>
+            </div>
+            <p><strong>전략:</strong> <span class="badge badge-agent">이노베이터 박</span>이 <strong>Step 06(FUE)</strong>에서 데이터 수집 부하와 분석 정확도의 트레이드오프를 최적화. <span class="badge badge-tool">OpenClaw</span>의 IoT 연동 기술로 실시간 제어.</p>
+        </div>
+        
+        <div id="m3" class="tab-content">
+            <h3>3. 중소 제조 공정 안전 파수꾼</h3>
+            <p><strong>전략:</strong> <span class="badge badge-agent">고든 박</span>이 <strong>Step 05(RFE)</strong>에서 네트워크 장애 시의 로컬 비상 알림 시나리오를 설계. <span class="badge badge-tool">Gemini</span>의 비전 분석으로 실시간 안전모 착용 유무 감지.</p>
+        </div>
+
+        <div id="m4" class="tab-content">
+            <h3>4. 로컬 투어 큐레이터</h3>
+            <p><strong>전략:</strong> <span class="badge badge-agent">파일럿 박</span>이 <strong>Step 10(FUT)</strong>에서 추천 경로의 실제 이동 시간 데이터를 수집하여 가설 검증. <span class="badge badge-tool">Antigravity</span>로 복합 데이터 소스 통합.</p>
+        </div>
+
+        <div id="m5" class="tab-content">
+            <h3>5. 지능형 행정 서류 자동화</h3>
+            <p><strong>전략:</strong> <span class="badge badge-agent">프롬프트 박</span>이 <strong>Step 04(FBD)</strong>에서 민원인의 헷갈리는 질문을 사전 차단하는 UX 설계. <span class="badge badge-tool">Gemini</span>의 고도화된 문맥 추론 활용.</p>
+        </div>
+
+        <div id="m6" class="tab-content">
+            <h3>6. 스타트업용 지능형 보안 관제</h3>
+            <p><strong>전략:</strong> <span class="badge badge-agent">마누스</span> 주도로 <strong>Step 13(Post-Mortem)</strong>을 수행하여 침입 경로 시스템의 결함을 자동 패치. <span class="badge badge-tool">OpenClaw</span>의 실시간 로그 분석 기반.</p>
+        </div>
+    </section>
+
+    <!-- 04. 시장 데이터 시각화 -->
+    <section class="section">
+        <h2>04 · AI 에이전트 시장 트렌드 분석</h2>
+        <div style="height: 400px; margin-bottom: 20px;">
+            <canvas id="marketChart"></canvas>
+        </div>
+        <p class="step-desc" style="text-align: center;">전 세계 AI 에이전트 시장 규모 전망 (단위: 십억 달러)</p>
+    </section>
+
+    <div class="footer">
+        <p>© 2026 PyhgoShift - Powered by Manus AI Commander</p>
+        <p style="margin-top: 5px;">데이터를 더 직관적으로 탐색하고, 트렌드를 더 잘 이해하며, 저장 및 공유를 쉽게 할 수 있는 인터랙티브 보고서</p>
+    </div>
+</div>
+
+<script>
+    // 탭 전환 함수
+    function openTab(evt, tabId) {
+        const contents = document.getElementsByClassName("tab-content");
+        for (let content of contents) content.classList.remove("active");
+        
+        const buttons = document.getElementsByClassName("tab-btn");
+        for (let btn of buttons) btn.classList.remove("active");
+        
+        document.getElementById(tabId).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+
+    // 차트 생성
+    const ctx = document.getElementById('marketChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['2025', '2026', '2027', '2028', '2029', '2030', '2031', '2032', '2033'],
+            datasets: [{
+                label: 'AI 에이전트 시장 성장 ($B)',
+                data: [7.8, 11.5, 17.2, 26.1, 39.8, 61.2, 94.5, 131.8, 182.4],
+                borderColor: '#6366f1',
+                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 6,
+                pointHoverRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

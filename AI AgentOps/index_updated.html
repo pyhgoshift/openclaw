@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>파이고시프트(PyhgoShift) - AI AgentOps 사업계획서</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: white;
+            padding: 40px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .tagline {
+            color: #764ba2;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+        
+        .section {
+            background: white;
+            padding: 40px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 30px 0;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .business-model {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 5px solid #667eea;
+            border-radius: 5px;
+        }
+        
+        .business-model h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .business-model p {
+            margin: 8px 0;
+            color: #555;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .tab-button {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .tab-button.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .tab-button:hover {
+            border-color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .agent-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .agent-card h4 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+        
+        .agent-card p {
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: white;
+            margin-top: 40px;
+        }
+        
+        .metric {
+            display: inline-block;
+            margin: 10px 20px;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .metric-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 파이고시프트(PyhgoShift)</h1>
+            <p class="tagline">AI AgentOps 플랫폼 기반 소상공인 & 지역 특화 산업 혁신</p>
+            <p style="color: #999; margin-top: 10px; font-size: 0.9em;">혁신을 위한 의도적인 자아 파괴 | Intentional Ego Disruption for Breakthroughs</p>
+        </header>
+
+        <!-- 01. Executive Summary -->
+        <section class="section">
+            <h2>01 · Executive Summary</h2>
+            <p>파이고시프트는 <strong>AI 에이전트 군단(Agent Swarm)</strong>을 조직하고 지휘하는 <strong>AgentOps 플랫폼</strong>을 개발하는 기술 스타트업입니다. 기존의 IT 인프라 운영 자동화를 넘어, 소상공인, 중소기업, 지역 특화 산업 등 <strong>진입 장벽이 낮고 AgentOps 구현이 용이한 시장</strong>에 특화된 6가지 비즈니스 모델을 제공합니다.</p>
+            
+            <div style="margin-top: 20px;">
+                <div class="metric">
+                    <div class="metric-value">49.6%</div>
+                    <div class="metric-label">AI 에이전트 시장 CAGR</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">$1,829.7B</div>
+                    <div class="metric-label">2033년 예상 시장 규모</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">40%</div>
+                    <div class="metric-label">2026년 기업 탑재율</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 02. Market Analysis -->
+        <section class="section">
+            <h2>02 · Market Analysis</h2>
+            
+            <h3>AI 에이전트 시장 성장 전망</h3>
+            <div class="chart-container">
+                <canvas id="marketGrowthChart"></canvas>
+            </div>
+            
+            <h3>주요 조사기관별 시장 규모 비교</h3>
+            <div class="chart-container">
+                <canvas id="marketComparisonChart"></canvas>
+            </div>
+            
+            <h3>기업 AI 에이전트 탑재율 변화</h3>
+            <div class="chart-container">
+                <canvas id="adoptionRateChart"></canvas>
+            </div>
+            
+            <h3>Agentic AI 지출 전망 (Gartner)</h3>
+            <div class="chart-container">
+                <canvas id="agenticSpendingChart"></canvas>
+            </div>
+        </section>
+
+        <!-- 03. Organization -->
+        <section class="section">
+            <h2>03 · Organization</h2>
+            <p style="margin-bottom: 20px;">파이고시프트는 <strong>CEO 1인(인간) + 6인의 AI 에이전트(디지털 직원)</strong>로 구성된 혁신적인 조직 구조를 가집니다.</p>
+            
+            <h3>The 7 Parks - 조직도</h3>
+            <div class="agent-card" style="background: linear-gradient(135deg, #333 0%, #555 100%); margin-bottom: 20px;">
+                <h4>🎯 프로이트 박 (Freud Park)</h4>
+                <p>CEO | 욕망 분석가</p>
+                <p style="font-size: 0.85em; margin-top: 10px;">유일한 인간 의사결정권자로서 고객의 요구를 분석하고 에이전트 군단에 비전을 제시합니다.</p>
+            </div>
+            
+            <div class="grid">
+                <div class="agent-card">
+                    <h4>✈️ 파일럿 박</h4>
+                    <p>CPO | 항해사</p>
+                    <p style="font-size: 0.85em;">프로젝트 기획 및 경로 설정</p>
+                </div>
+                <div class="agent-card">
+                    <h4>💡 이노베이터 박</h4>
+                    <p>CTO | 혁신가</p>
+                    <p style="font-size: 0.85em;">R&D 및 신기술 도입</p>
+                </div>
+                <div class="agent-card">
+                    <h4>🛡️ 고든 박</h4>
+                    <p>CSO | 수호자</p>
+                    <p style="font-size: 0.85em;">인프라 보안 및 방어</p>
+                </div>
+                <div class="agent-card">
+                    <h4>🔗 시냅스 박</h4>
+                    <p>COO | 연결자</p>
+                    <p style="font-size: 0.85em;">네트워크 및 시스템 통신</p>
+                </div>
+                <div class="agent-card">
+                    <h4>📝 프롬프트 박</h4>
+                    <p>CAO | 설계자</p>
+                    <p style="font-size: 0.85em;">AI 언어 설계 및 최적화</p>
+                </div>
+                <div class="agent-card">
+                    <h4>⚡ 트리거 박</h4>
+                    <p>CDO | 집행관</p>
+                    <p style="font-size: 0.85em;">배포 및 실행</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 04. Products & Services -->
+        <section class="section">
+            <h2>04 · Products & Services</h2>
+            
+            <h3>PyhgoShift AgentOps Platform</h3>
+            <p>기업이 자체적으로 AI 에이전트 군단을 조직, 배치, 관리할 수 있는 통합 플랫폼입니다.</p>
+            
+            <div class="highlight">
+                <strong>주요 기능:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>Agent Dispatcher:</strong> 직무별 특화 에이전트를 즉시 배포하고 역할을 부여</li>
+                    <li><strong>Swarm Protocols:</strong> 에이전트 간 협업 파이프라인 설계 및 중재</li>
+                    <li><strong>Performance Monitor:</strong> 작업 성공률, 비용 등 실시간 추적</li>
+                    <li><strong>Governance Console:</strong> 모든 활동 기록 및 보안 통제</li>
+                </ul>
+            </div>
+            
+            <h3>6대 핵심 비즈니스 모델</h3>
+            
+            <div class="business-model">
+                <h4>1️⃣ 소상공인/전통시장 스마트 서기관 (Smart Market Secretary)</h4>
+                <p><strong>기능:</strong> 매일의 날씨, 지역 행사, 트렌드를 분석하여 상점의 홍보 문구(블로그, 인스타그램)를 자동 생성하고 배포</p>
+                <p><strong>AgentOps 구현:</strong> 파일럿(기획) → 프롬프트(언어) → 트리거(실행)</p>
+            </div>
+            
+            <div class="business-model">
+                <h4>2️⃣ 지능형 에너지 비용 최적화 (Energy Cost Optimizer)</h4>
+                <p><strong>기능:</strong> 실시간 전력 사용량 데이터를 모니터링하여 요금제별 최적 사용 시간대를 가이드하고, 낭비 전력을 식별하여 보고서 생성</p>
+                <p><strong>AgentOps 구현:</strong> 시냅스(네트워크) → 이노베이터(기술) → 고든(보안)</p>
+            </div>
+            
+            <div class="business-model">
+                <h4>3️⃣ 중소 제조 공정 안전 파수꾼 (Safety Guardian for SMB)</h4>
+                <p><strong>기능:</strong> CCTV 영상이나 센서 데이터를 분석하여 작업자 안전 장구 미착용이나 위험 구역 침범을 실시간 감지하고 알림 발송</p>
+                <p><strong>AgentOps 구현:</strong> 고든(보안) → 시냅스(연결) → 트리거(실행)</p>
+            </div>
+            
+            <div class="business-model">
+                <h4>4️⃣ 로컬 관광/메가시티 맞춤형 큐레이터 (Local Tour Curator)</h4>
+                <p><strong>기능:</strong> 실시간 교통, 맛집 대기 시간, 지역 축제 정보를 조합하여 관광객에게 1:1 맞춤형 여행 코스를 실시간으로 조정하며 안내</p>
+                <p><strong>AgentOps 구현:</strong> 파일럿(기획) → 이노베이터(기술) → 프롬프트(언어)</p>
+            </div>
+            
+            <div class="business-model">
+                <h4>5️⃣ 지능형 행정 서류 자동화 (Administrative Doc Automation)</h4>
+                <p><strong>기능:</strong> 복잡한 민원 서류나 공공 사업 신청서를 AI가 대화 형식으로 입력받아 표준 양식으로 자동 변환 및 검토</p>
+                <p><strong>AgentOps 구현:</strong> 프롬프트(언어) → 이노베이터(기술) → 고든(보안)</p>
+            </div>
+            
+            <div class="business-model">
+                <h4>6️⃣ 소규모 기업용 지능형 보안 관제 (Mini SOC for Startups)</h4>
+                <p><strong>기능:</strong> 클라우드 로그를 실시간 분석하여 비정상 접근을 차단하고, 매주 보안 리포트를 자동으로 생성하여 이메일 발송</p>
+                <p><strong>AgentOps 구현:</strong> 고든(보안) → 시냅스(연결) → 트리거(실행)</p>
+            </div>
+        </section>
+
+        <!-- 05. Roadmap -->
+        <section class="section">
+            <h2>05 · Roadmap</h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>단계</th>
+                        <th>시기</th>
+                        <th>주요 목표</th>
+                        <th>산출물</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Phase 1: MVP & Pilot</strong></td>
+                        <td>2026년</td>
+                        <td>6대 모델 중 1~2개 MVP 개발 및 파일럿 성공</td>
+                        <td>초기 레퍼런스 확보</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Phase 2: Scale</strong></td>
+                        <td>2027년</td>
+                        <td>레퍼런스 기반 3~4개 모델 확장, 고객 10곳 달성</td>
+                        <td>시장 입지 강화</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Phase 3: SaaS & Expand</strong></td>
+                        <td>2028년</td>
+                        <td>SaaS 플랫폼 출시, 전체 6개 모델 상용화</td>
+                        <td>시장 리더 위치 확보</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 06. Financial Plan -->
+        <section class="section">
+            <h2>06 · Financial Plan</h2>
+            
+            <h3>3개년 매출 목표</h3>
+            <div class="chart-container">
+                <canvas id="revenueChart"></canvas>
+            </div>
+            
+            <h3>초기 자금 조달 계획</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>자금원</th>
+                        <th>규모</th>
+                        <th>용도</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>개인 자본</td>
+                        <td>1억 원</td>
+                        <td>초기 운영 자금</td>
+                    </tr>
+                    <tr>
+                        <td>정부 지원 (TIPS, 창업성장기술개발)</td>
+                        <td>3~5억 원</td>
+                        <td>R&D 및 개발 자금</td>
+                    </tr>
+                    <tr>
+                        <td>엔젤 투자</td>
+                        <td>2억 원</td>
+                        <td>마케팅 및 영업 확대</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>가격 정책</h3>
+            <div class="highlight">
+                <p><strong>구축형 (On-Premise):</strong> 초기 구축비 500만원 ~ 3,000만원 + 연간 15% 유지보수</p>
+                <p style="margin-top: 10px;"><strong>구독형 (SaaS):</strong> 월 500만원부터 (에이전트 수, API 호출량에 따라 차등)</p>
+            </div>
+        </section>
+
+        <!-- 07. Risk Analysis -->
+        <section class="section">
+            <h2>07 · Risk Analysis & Mitigation</h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>위험 요소</th>
+                        <th>영향도</th>
+                        <th>대응 전략</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>기술적 위험</strong><br/>AI 에이전트 환각 및 예측 불가능한 행동</td>
+                        <td>높음</td>
+                        <td>에이전트 행동 반경 엄격히 제한, Human-in-the-loop 의무화</td>
+                    </tr>
+                    <tr>
+                        <td><strong>시장 위험</strong><br/>글로벌 빅테크의 직접 진출</td>
+                        <td>중간</td>
+                        <td>소상공인/지역 특화 산업 등 틈새 시장 특화, 빠른 실행력</td>
+                    </tr>
+                    <tr>
+                        <td><strong>운영 위험</strong><br/>CEO 1인 의사결정 집중</td>
+                        <td>중간</td>
+                        <td>시리즈 A 이후 핵심 인력 충원으로 리스크 분산</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 08. Competitive Advantage -->
+        <section class="section">
+            <h2>08 · Competitive Advantage</h2>
+            
+            <div class="highlight">
+                <h3 style="color: #667eea; margin-top: 0;">파이고시프트의 차별화 전략</h3>
+                <ul style="margin-left: 20px; margin-top: 15px;">
+                    <li><strong>Niche Market 특화:</strong> 글로벌 빅테크가 직접 대응하기 어려운 소상공인, 지역 특화 산업에 집중</li>
+                    <li><strong>빠른 가치 창출:</strong> AgentOps의 즉각적인 효과(비용 절감, 효율 증대)를 통해 시장 선점</li>
+                    <li><strong>고객 맞춤형 서비스:</strong> 각 산업의 특성에 맞춘 버티컬 솔루션 제공</li>
+                    <li><strong>낮은 진입 장벽:</strong> 초기 구축비 500만원부터 시작 가능한 합리적 가격</li>
+                </ul>
+            </div>
+        </section>
+
+        <footer>
+            <p>© 2026 PyhgoShift. All rights reserved.</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">혁신을 위한 의도적인 자아 파괴 | Intentional Ego Disruption for Breakthroughs</p>
+        </footer>
+    </div>
+
+    <script>
+        // Market Growth Chart
+        const marketGrowthCtx = document.getElementById('marketGrowthChart').getContext('2d');
+        new Chart(marketGrowthCtx, {
+            type: 'line',
+            data: {
+                labels: ['2025', '2026', '2027', '2028', '2029', '2030', '2031', '2032', '2033'],
+                datasets: [{
+                    label: 'AI 에이전트 시장 규모 (십억 달러)',
+                    data: [7.63, 11.4, 17.0, 25.4, 37.9, 56.6, 84.5, 126.2, 182.97],
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#667eea',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: { font: { size: 12 } }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { font: { size: 11 } }
+                    }
+                }
+            }
+        });
+
+        // Market Comparison Chart
+        const comparisonCtx = document.getElementById('marketComparisonChart').getContext('2d');
+        new Chart(comparisonCtx, {
+            type: 'bar',
+            data: {
+                labels: ['2025년', '2030년'],
+                datasets: [
+                    {
+                        label: 'Grand View Research',
+                        data: [7.63, 182.97],
+                        backgroundColor: '#667eea'
+                    },
+                    {
+                        label: 'MarketsandMarkets',
+                        data: [7.84, 52.62],
+                        backgroundColor: '#764ba2'
+                    },
+                    {
+                        label: 'BCC Research',
+                        data: [5.7, 48.3],
+                        backgroundColor: '#f093fb'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { font: { size: 11 } }
+                    }
+                }
+            }
+        });
+
+        // Adoption Rate Chart
+        const adoptionCtx = document.getElementById('adoptionRateChart').getContext('2d');
+        new Chart(adoptionCtx, {
+            type: 'line',
+            data: {
+                labels: ['2025', '2026', '2027', '2028'],
+                datasets: [{
+                    label: '기업 AI 에이전트 탑재율 (%)',
+                    data: [5, 40, 65, 85],
+                    borderColor: '#764ba2',
+                    backgroundColor: 'rgba(118, 75, 162, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointBackgroundColor: '#764ba2'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: { font: { size: 11 } }
+                    }
+                }
+            }
+        });
+
+        // Agentic Spending Chart
+        const spendingCtx = document.getElementById('agenticSpendingChart').getContext('2d');
+        new Chart(spendingCtx, {
+            type: 'bar',
+            data: {
+                labels: ['챗봇', 'Agentic AI'],
+                datasets: [{
+                    label: '2026년 예상 지출 (십억 달러)',
+                    data: [150, 201.9],
+                    backgroundColor: ['#f093fb', '#667eea']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { font: { size: 11 } }
+                    }
+                }
+            }
+        });
+
+        // Revenue Chart
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(revenueCtx, {
+            type: 'bar',
+            data: {
+                labels: ['2026년', '2027년', '2028년'],
+                datasets: [{
+                    label: '예상 매출 (억 원)',
+                    data: [2, 8, 20],
+                    backgroundColor: ['#667eea', '#764ba2', '#f093fb']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { font: { size: 11 } }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

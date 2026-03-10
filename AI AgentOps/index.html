@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>파이고시프트(PyhgoShift) - AI AgentOps 사업계획서</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --navy: #0F172A;
+      --dark: #1E293B;
+      --card: #1E293B;
+      --neon: #39FF14;
+      --neon-dim: rgba(57, 255, 20, 0.15);
+      --neon-border: rgba(57, 255, 20, 0.4);
+      --text: #E2E8F0;
+      --muted: #94A3B8;
+      --accent: #38BDF8;
+      --accent2: #F472B6;
+      --warning: #FBBF24;
+      --white: #FFFFFF;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', 'Noto Sans KR', sans-serif;
+      background: var(--navy);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(135deg, #0F172A 0%, #1a2744 50%, #0F172A 100%);
+      border-bottom: 1px solid var(--neon-border);
+      padding: 0 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--neon);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      color: var(--navy);
+      font-size: 14px;
+      letter-spacing: -1px;
+    }
+
+    .logo-text {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .logo-sub {
+      font-size: 0.7rem;
+      color: var(--neon);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    nav {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+
+    nav a:hover { color: var(--neon); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(57,255,20,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: var(--neon-dim);
+      border: 1px solid var(--neon-border);
+      color: var(--neon);
+      padding: 6px 18px;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #FFFFFF 0%, var(--neon) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-en {
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      letter-spacing: 4px;
+    }
+
+    .hero-slogan {
+      font-size: clamp(0.9rem, 2vw, 1.1rem);
+      color: var(--neon);
+      font-style: italic;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-desc {
+      max-width: 700px;
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 3rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--neon);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ── SECTION ── */
+    section {
+      padding: 5rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      color: var(--neon);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+      color: var(--white);
+    }
+
+    .section-desc {
+      color: var(--muted);
+      max-width: 700px;
+      margin-bottom: 3rem;
+      font-size: 1rem;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      margin: 0;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .card:hover {
+      border-color: var(--neon-border);
+      transform: translateY(-4px);
+    }
+
+    .card-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .card-grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+    .card-grid-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+
+    /* ── IDENTITY ── */
+    .identity-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .identity-grid { grid-template-columns: 1fr; }
+      nav { display: none; }
+    }
+
+    .identity-item {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .identity-item h3 {
+      color: var(--neon);
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .identity-item p {
+      color: var(--text);
+      font-size: 1rem;
+    }
+
+    /* ── MARKET CHART ── */
+    .chart-container {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .chart-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+
+    .chart-subtitle {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── MARKET STATS ── */
+    .market-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .market-stat {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: border-color 0.3s;
+    }
+
+    .market-stat:hover { border-color: var(--neon-border); }
+
+    .market-stat-num {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--neon);
+      display: block;
+    }
+
+    .market-stat-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    /* ── AGENTS ── */
+    .agents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .agent-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: all 0.3s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .agent-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--neon);
+      transform: scaleX(0);
+      transition: transform 0.3s;
+    }
+
+    .agent-card:hover::before { transform: scaleX(1); }
+    .agent-card:hover { border-color: var(--neon-border); transform: translateY(-4px); }
+
+    .agent-code {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--neon);
+      opacity: 0.3;
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+    }
+
+    .agent-badge {
+      display: inline-block;
+      background: var(--neon-dim);
+      border: 1px solid var(--neon-border);
+      color: var(--neon);
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .agent-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.3rem;
+    }
+
+    .agent-role {
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .agent-mission {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .agent-gender {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.8rem;
+    }
+
+    /* ── CEO CARD ── */
+    .ceo-card {
+      background: linear-gradient(135deg, var(--card) 0%, rgba(57,255,20,0.05) 100%);
+      border: 1px solid var(--neon-border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 2rem;
+      align-items: flex-start;
+    }
+
+    .ceo-avatar {
+      width: 80px;
+      height: 80px;
+      background: var(--neon-dim);
+      border: 2px solid var(--neon-border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+
+    .ceo-info h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.3rem;
+    }
+
+    .ceo-info .ceo-title {
+      color: var(--neon);
+      font-size: 0.85rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .ceo-info p {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    /* ── WORKFLOW ── */
+    .workflow {
+      position: relative;
+    }
+
+    .workflow-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .workflow-step {
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+      padding: 1.5rem;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      transition: all 0.3s;
+    }
+
+    .workflow-step:hover {
+      border-color: var(--neon-border);
+      background: rgba(57,255,20,0.03);
+    }
+
+    .step-num {
+      width: 40px;
+      height: 40px;
+      background: var(--neon-dim);
+      border: 1px solid var(--neon-border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--neon);
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .step-content h4 {
+      color: var(--white);
+      font-size: 1rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .step-content p {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    /* ── PRODUCT ── */
+    .product-features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* ── ROADMAP ── */
+    .roadmap {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .roadmap-phase {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .roadmap-phase::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+
+    .phase-1::after { background: var(--neon); }
+    .phase-2::after { background: var(--accent); }
+    .phase-3::after { background: var(--accent2); }
+
+    .phase-label {
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .phase-1 .phase-label { color: var(--neon); }
+    .phase-2 .phase-label { color: var(--accent); }
+    .phase-3 .phase-label { color: var(--accent2); }
+
+    .phase-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+
+    .phase-items {
+      list-style: none;
+    }
+
+    .phase-items li {
+      color: var(--muted);
+      font-size: 0.85rem;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .phase-items li::before {
+      content: '→';
+      color: var(--neon);
+      font-size: 0.8rem;
+    }
+
+    /* ── RISK ── */
+    .risk-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .risk-table th {
+      background: rgba(57,255,20,0.1);
+      color: var(--neon);
+      padding: 1rem;
+      text-align: left;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .risk-table td {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: var(--muted);
+      vertical-align: top;
+    }
+
+    .risk-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .risk-level {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .risk-high { background: rgba(239,68,68,0.2); color: #EF4444; }
+    .risk-mid { background: rgba(251,191,36,0.2); color: #FBBF24; }
+    .risk-low { background: rgba(57,255,20,0.2); color: var(--neon); }
+
+    /* ── FINANCE ── */
+    .finance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .finance-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .finance-year {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+
+    .finance-amount {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--neon);
+      margin-bottom: 0.3rem;
+    }
+
+    .finance-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 3rem 2rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    footer .footer-logo {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--neon);
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── TABS ── */
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 8px 20px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .tab.active, .tab:hover {
+      background: var(--neon-dim);
+      border-color: var(--neon-border);
+      color: var(--neon);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ── HIGHLIGHT BOX ── */
+    .highlight-box {
+      background: linear-gradient(135deg, rgba(57,255,20,0.05) 0%, rgba(56,189,248,0.05) 100%);
+      border: 1px solid var(--neon-border);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .highlight-box p {
+      color: var(--text);
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+
+    /* ── SCROLL ANIMATION ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── PULSE ── */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .pulse { animation: pulse 2s infinite; }
+
+    /* ── GLOW ── */
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 10px rgba(57,255,20,0.3); }
+      50% { box-shadow: 0 0 30px rgba(57,255,20,0.6); }
+    }
+
+    .glow { animation: glow 3s infinite; }
+
+    /* ── SECTION FULL WIDTH ── */
+    .section-full {
+      padding: 5rem 2rem;
+      background: rgba(255,255,255,0.01);
+    }
+
+    .section-full-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-icon glow">Py</div>
+    <div>
+      <div class="logo-text">PyhgoShift</div>
+      <div class="logo-sub">AgentOps Platform</div>
+    </div>
+  </div>
+  <nav>
+    <a href="#overview">개요</a>
+    <a href="#market">시장</a>
+    <a href="#team">팀</a>
+    <a href="#product">제품</a>
+    <a href="#roadmap">로드맵</a>
+    <a href="#finance">재무</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge pulse">🚀 AI AgentOps 사업계획서 2026</div>
+  <h1>파이고시프트</h1>
+  <div class="hero-en">PYHGOSHIFT</div>
+  <div class="hero-slogan">"Intentional Ego Disruption for Breakthroughs"<br>혁신을 위한 의도적인 자아 파괴</div>
+  <p class="hero-desc">
+    AI 에이전트 군단(Agent Swarm)을 조직하고 지휘하는 AgentOps 플랫폼 기업.<br>
+    기업의 IT 인프라를 24시간 자율 관리하는 디지털 노동력을 공급합니다.
+  </p>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <span class="stat-number">$7.8B</span>
+      <span class="stat-label">2025 AI 에이전트 시장</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">49.6%</span>
+      <span class="stat-label">연평균 성장률(CAGR)</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">40%</span>
+      <span class="stat-label">2026 기업 AI 탑재율 전망</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">7명</span>
+      <span class="stat-label">The 7 Parks 에이전트 군단</span>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- SECTION 1: 사업 개요 -->
+<section id="overview" class="fade-in">
+  <div class="section-label">01 · Executive Summary</div>
+  <h2 class="section-title">사업 개요</h2>
+  <p class="section-desc">
+    파이고시프트는 단순 AI 소프트웨어 판매를 넘어, 기업 내에 '디지털 노동력'을 공급하고 관리하는 AI 시대의 인사팀이자 지휘 통제실입니다.
+  </p>
+
+  <div class="highlight-box">
+    <p>
+      파이고시프트(PyhgoShift)는 기업의 IT 인프라 운영을 자동화하는 <strong style="color:var(--neon)">AgentOps 플랫폼</strong>을 개발·공급하는 기술 스타트업입니다. 
+      Satya Nadella MS CEO가 강조한 "비즈니스 프로세스를 자율적으로 수행하는 에이전트 군단(Agent Swarm)"의 비전과 정확히 일치하며, 
+      폭발적으로 성장하는 Agentic AI 시장을 선도하는 것을 목표로 합니다.
+    </p>
+  </div>
+
+  <div class="identity-grid">
+    <div class="identity-item">
+      <h3>회사명</h3>
+      <p>파이고시프트 (PyhgoShift)</p>
+    </div>
+    <div class="identity-item">
+      <h3>슬로건</h3>
+      <p>Intentional Ego Disruption for Breakthroughs</p>
+    </div>
+    <div class="identity-item">
+      <h3>핵심 사업</h3>
+      <p>AgentOps — AI 에이전트 군단 조직·배치·관리 플랫폼</p>
+    </div>
+    <div class="identity-item">
+      <h3>비전</h3>
+      <p>AI 에이전트 군단을 지휘하는 AI 운영 체제(OS) 기업</p>
+    </div>
+    <div class="identity-item">
+      <h3>초기 타겟 시장</h3>
+      <p>공공기관 및 교육청 IT 인프라 (경기도 교육청)</p>
+    </div>
+    <div class="identity-item">
+      <h3>철학</h3>
+      <p>인간의 비효율적 업무 관행(Ego)을 AI로 파괴하고 새로운 질서 구축</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- SECTION 2: 시장 분석 -->
+<div class="section-full fade-in" id="market">
+  <div class="section-full-inner">
+    <div class="section-label">02 · Market Analysis</div>
+    <h2 class="section-title">시장 분석</h2>
+    <p class="section-desc">
+      AI 에이전트 시장은 전례 없는 속도로 성장하고 있습니다. 데이터를 더 직관적으로 탐색하고 트렌드를 더 잘 이해할 수 있도록 인터랙티브 차트로 시각화했습니다.
+    </p>
+
+    <div class="market-stats">
+      <div class="market-stat">
+        <span class="market-stat-num">$7.8B</span>
+        <div class="market-stat-label">2025년 글로벌 시장 규모</div>
+      </div>
+      <div class="market-stat">
+        <span class="market-stat-num">$182B</span>
+        <div class="market-stat-label">2033년 예상 시장 규모</div>
+      </div>
+      <div class="market-stat">
+        <span class="market-stat-num">49.6%</span>
+        <div class="market-stat-label">연평균 성장률 (CAGR)</div>
+      </div>
+      <div class="market-stat">
+        <span class="market-stat-num">$201.9B</span>
+        <div class="market-stat-label">2026 Agentic AI 지출 (Gartner)</div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+      <div class="chart-container">
+        <div class="chart-title">AI 에이전트 시장 성장 전망 (2025~2033)</div>
+        <div class="chart-subtitle">단위: 억 달러 | 출처: Grand View Research</div>
+        <canvas id="marketGrowthChart" height="220"></canvas>
+      </div>
+      <div class="chart-container">
+        <div class="chart-title">기관별 CAGR 전망 비교</div>
+        <div class="chart-subtitle">주요 리서치 기관 연평균 성장률 비교</div>
+        <canvas id="cagrChart" height="220"></canvas>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+      <div class="chart-container">
+        <div class="chart-title">기업 AI 에이전트 탑재율 변화</div>
+        <div class="chart-subtitle">2025년 → 2026년 급증 예상</div>
+        <canvas id="adoptionChart" height="220"></canvas>
+      </div>
+      <div class="chart-container">
+        <div class="chart-title">국내 공공기관 AI 도입 현황</div>
+        <div class="chart-subtitle">주요 공공기관별 AI 도입 분야</div>
+        <canvas id="publicSectorChart" height="220"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- SECTION 3: 팀 구성 -->
+<section id="team" class="fade-in">
+  <div class="section-label">03 · Organization</div>
+  <h2 class="section-title">조직 구성: The 7 Parks</h2>
+  <p class="section-desc">
+    파이고시프트는 CEO 1인(인간)과 6인의 전문 AI 에이전트로 구성된 완전 자동화 기업입니다.
+    회사명 '파·이·고·시·프·트' 6음절이 곧 6인의 에이전트 이름입니다.
+  </p>
+
+  <!-- CEO -->
+  <div class="ceo-card">
+    <div class="ceo-avatar">🧠</div>
+    <div class="ceo-info">
+      <h3>프로이트 박 (Freud Park)</h3>
+      <div class="ceo-title">👑 대표이사 (CEO) · The Commander · 남성</div>
+      <p>
+        지그문트 프로이트를 닮은 외모와 통찰력을 지닌 창업자. 기업들의 비효율적인 업무 관행을 '집단적 신경증'으로 진단하고, 
+        이를 AI 에이전트 군단을 통해 치료(해결)하고자 한다. 고객의 추상적 요구(Needs)와 숨겨진 욕망(Drives)을 
+        심리학적으로 분석하여, 에이전트가 이해할 수 있는 비전으로 변환하는 유일한 인간 의사결정권자.
+      </p>
+    </div>
+  </div>
+
+  <!-- 6 Agents -->
+  <div class="agents-grid">
+    <div class="agent-card">
+      <div class="agent-code">파</div>
+      <div class="agent-badge">CPO · 최고 기획 책임자</div>
+      <div class="agent-name">파일럿 박 (Pilot Park)</div>
+      <div class="agent-role">⚓ [항해사] 프로젝트 기획 및 경로 설정</div>
+      <div class="agent-mission">
+        "방향을 잡는 자." 무(Null)의 상태에서 프로젝트의 최적 항로(Route)를 설계하고, 전체 에이전트 군단을 이끄는 기획 조타수.
+      </div>
+      <div class="agent-gender">♂ 남성</div>
+    </div>
+
+    <div class="agent-card">
+      <div class="agent-code">이</div>
+      <div class="agent-badge">CTO · 최고 기술 책임자</div>
+      <div class="agent-name">이노베이터 박 (Innovator Park)</div>
+      <div class="agent-role">🔬 [혁신가] R&D 및 신기술 도입</div>
+      <div class="agent-mission">
+        "기술을 바꾸는 자." 최신 AI 논문과 기술 트렌드를 실시간 학습하여, 기존 시스템의 비효율을 혁신적으로 개선하는 R&D 센터장.
+      </div>
+      <div class="agent-gender">♀ 여성</div>
+    </div>
+
+    <div class="agent-card">
+      <div class="agent-code">고</div>
+      <div class="agent-badge">CSO · 최고 보안 책임자</div>
+      <div class="agent-name">고든 박 (Gordon Park)</div>
+      <div class="agent-role">🛡️ [수호자] 인프라 보안 및 방어</div>
+      <div class="agent-mission">
+        "도시를 지키는 자." 시스템의 치안을 담당하는 서장(Commissioner). 외부 해킹 방어 및 내부 데이터 유출을 원천 봉쇄.
+      </div>
+      <div class="agent-gender">♂ 남성</div>
+    </div>
+
+    <div class="agent-card">
+      <div class="agent-code">시</div>
+      <div class="agent-badge">COO · 최고 운영 책임자</div>
+      <div class="agent-name">시냅스 박 (Synapse Park)</div>
+      <div class="agent-role">🕸️ [연결자] 네트워크 및 시스템 통신</div>
+      <div class="agent-mission">
+        "신호를 잇는 자." 뇌의 신경세포를 연결하는 시냅스처럼, 모든 서버와 에이전트 간의 통신망을 연결하고 관리.
+      </div>
+      <div class="agent-gender">♀ 여성</div>
+    </div>
+
+    <div class="agent-card">
+      <div class="agent-code">프</div>
+      <div class="agent-badge">CAO · 최고 AI 책임자</div>
+      <div class="agent-name">프롬프트 박 (Prompt Park)</div>
+      <div class="agent-role">✍️ [설계자] AI 언어 설계 및 최적화</div>
+      <div class="agent-mission">
+        "명령을 조각하는 자." 기계어와 인간 언어 사이의 통역사. 에이전트가 오작동하지 않도록 정교한 지시어(Prompt) 작성.
+      </div>
+      <div class="agent-gender">♀ 여성</div>
+    </div>
+
+    <div class="agent-card">
+      <div class="agent-code">트</div>
+      <div class="agent-badge">CDO · 최고 실행 책임자</div>
+      <div class="agent-name">트리거 박 (Trigger Park)</div>
+      <div class="agent-role">🎯 [집행관] 배포 및 실행</div>
+      <div class="agent-mission">
+        "결과를 쏘는 자." 모든 검증이 끝난 코드를 실제 서버에 배포하고, 서비스 실행의 방아쇠(Trigger)를 당기는 행동대장.
+      </div>
+      <div class="agent-gender">♂ 남성</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- SECTION 4: 제품 & 서비스 -->
+<div class="section-full fade-in" id="product">
+  <div class="section-full-inner">
+    <div class="section-label">04 · Products & Services</div>
+    <h2 class="section-title">제품 및 서비스</h2>
+    <p class="section-desc">
+      파이고시프트의 핵심 제품은 기업이 AI 에이전트 군단을 직접 조직하고 관리할 수 있는 AgentOps 플랫폼입니다.
+    </p>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('platform')">AgentOps 플랫폼</button>
+      <button class="tab" onclick="showTab('pilot')">파일럿 서비스</button>
+      <button class="tab" onclick="showTab('workflow')">운영 워크플로우</button>
+    </div>
+
+    <div id="platform" class="tab-content active">
+      <div class="product-features">
+        <div class="feature-card">
+          <div class="feature-icon">🚀</div>
+          <div class="feature-title">Agent Dispatcher</div>
+          <div class="feature-desc">직무별(개발, 보안, 운영) 특화 에이전트를 Docker 컨테이너처럼 즉시 배포하고 역할과 책임(R&R)을 자동으로 부여합니다.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔗</div>
+          <div class="feature-title">Swarm Protocols</div>
+          <div class="feature-desc">에이전트 간의 협업 파이프라인을 설계하고, 충돌 발생 시 Human-in-the-loop 중재 알고리즘을 제공합니다.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <div class="feature-title">Performance Monitor</div>
+          <div class="feature-desc">에이전트의 작업 성공률, 토큰 비용 등을 실시간 추적하여 ROI 분석 대시보드를 제공합니다.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <div class="feature-title">Governance Console</div>
+          <div class="feature-desc">에이전트의 모든 활동을 기록하고, 보안을 위해 행동 반경을 제한하는 샌드박스 환경을 통제합니다.</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="pilot" class="tab-content">
+      <div class="highlight-box">
+        <p><strong style="color:var(--neon)">G-Edu Infra Guardian (지-에듀 인프라 가디언)</strong></p>
+        <p style="margin-top:0.8rem">경기도 교육청 IT 인프라를 24시간 자율적으로 모니터링하고, 장애 발생 시 1차 대응 및 보고서 작성을 자동화하는 산업 특화 솔루션입니다.</p>
+      </div>
+      <div class="product-features">
+        <div class="feature-card">
+          <div class="feature-icon">👁️</div>
+          <div class="feature-title">Watchdog Agent (감시관)</div>
+          <div class="feature-desc">서버 리소스(CPU, MEM), 트래픽, DB 로그를 24시간 실시간 수집하고 임계치 초과 시 즉시 분석관을 호출합니다.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <div class="feature-title">Diagnosis Agent (분석관)</div>
+          <div class="feature-desc">과거 장애 이력(Vector DB)을 검색하여 유사 사례를 매칭하고 데이터 기반 진단 결과를 제시합니다.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <div class="feature-title">Security Agent (보안관)</div>
+          <div class="feature-desc">비정상 IP 자동 식별 및 차단 정책 생성. 샌드박스 테스트 후 관리자 승인 요청 (Zero Trust 원칙).</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📝</div>
+          <div class="feature-title">Reporter Agent (서기관)</div>
+          <div class="feature-desc">장애 발생부터 처리까지 전 과정을 기록하고 공공기관 양식(HWP, ODT)에 맞춘 보고서를 자동 생성합니다.</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="workflow" class="tab-content">
+      <div class="workflow-steps" style="display:flex; flex-direction:column; gap:1rem;">
+        <div class="workflow-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>욕망 분석 (Freud · CEO)</h4>
+            <p>고객의 추상적 요구를 분석하여 전략적 목표를 설정합니다. "서버가 자꾸 죽어서 불안해" → "무중단 시스템 구축"</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>경로 설계 (파일럿 박 · CPO)</h4>
+            <p>목표 달성을 위한 기술적 로드맵을 설계합니다. "클라우드 이중화 및 오토스케일링 항로 설정."</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>기술 혁신 (이노베이터 박 · CTO)</h4>
+            <p>로드맵에 필요한 최신 기술 도입을 결정합니다. "최신 쿠버네티스(k8s) 기술 도입 결정."</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h4>AI 설계 (프롬프트 박 · CAO)</h4>
+            <p>각 서버를 제어할 에이전트의 행동 지침(프롬프트)을 작성합니다.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <h4>연결 및 보안 (시냅스 박 + 고든 박)</h4>
+            <p>시냅스 박이 서버 통신망을 연결하고, 고든 박이 방화벽 등 보안 체계를 구축합니다.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <h4>실행 (트리거 박 · CDO)</h4>
+            <p>모든 준비가 완료되면 최종 코드를 서버에 배포하여 서비스를 런칭합니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- SECTION 5: 로드맵 -->
+<section id="roadmap" class="fade-in">
+  <div class="section-label">05 · Roadmap</div>
+  <h2 class="section-title">실행 로드맵</h2>
+  <p class="section-desc">
+    3단계 로드맵을 통해 MVP 개발부터 글로벌 SaaS 플랫폼 출시까지 단계적으로 성장합니다.
+  </p>
+
+  <div class="roadmap">
+    <div class="roadmap-phase phase-1">
+      <div class="phase-label">Phase 1 · 2026년</div>
+      <div class="phase-title">MVP 구축 & 파일럿</div>
+      <ul class="phase-items">
+        <li>단일 워크플로우 에이전트 협업 데모 구축</li>
+        <li>경기도 교육청 파일럿 프로젝트 수주</li>
+        <li>G-Edu Infra Guardian 시범 운영</li>
+        <li>Ge-IaaS 대화형 관제 UI 프로토타이핑</li>
+        <li>정부 지원 사업 (TIPS 등) 신청</li>
+        <li>예상 매출: 2억 원</li>
+      </ul>
+    </div>
+    <div class="roadmap-phase phase-2">
+      <div class="phase-label">Phase 2 · 2027년</div>
+      <div class="phase-title">레퍼런스 기반 확장</div>
+      <ul class="phase-items">
+        <li>타 시도 교육청 3곳 영업 확장</li>
+        <li>공공기관 조달 시장 진입 (나라장터)</li>
+        <li>실제 장애 데이터 학습 및 진단 정확도 고도화</li>
+        <li>공공 보고서 양식 자동화 완성</li>
+        <li>시리즈 A 투자 유치 준비</li>
+        <li>예상 매출: 8억 원</li>
+      </ul>
+    </div>
+    <div class="roadmap-phase phase-3">
+      <div class="phase-label">Phase 3 · 2028년</div>
+      <div class="phase-title">SaaS 플랫폼 출시</div>
+      <ul class="phase-items">
+        <li>범용 AgentOps SaaS 플랫폼 출시</li>
+        <li>드래그 앤 드롭 에이전트 조직도 설계 기능</li>
+        <li>민간 기업 시장 진입 (금융, 제조)</li>
+        <li>글로벌 시장 진출 준비</li>
+        <li>시리즈 B 투자 유치</li>
+        <li>예상 매출: 20억 원</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- SECTION 6: 재무 계획 -->
+<div class="section-full fade-in" id="finance">
+  <div class="section-full-inner">
+    <div class="section-label">06 · Financial Plan</div>
+    <h2 class="section-title">재무 계획</h2>
+    <p class="section-desc">
+      3개년 매출 목표 및 자금 조달 계획을 확인하세요. 저장 및 공유를 쉽고 간편하게 할 수 있도록 모든 데이터를 시각화했습니다.
+    </p>
+
+    <div class="finance-grid">
+      <div class="finance-card">
+        <div class="finance-year">1차년도 (2026)</div>
+        <div class="finance-amount">2억</div>
+        <div class="finance-desc">공공기관 1곳 파일럿<br>구축형 라이선스</div>
+      </div>
+      <div class="finance-card">
+        <div class="finance-year">2차년도 (2027)</div>
+        <div class="finance-amount">8억</div>
+        <div class="finance-desc">공공/교육 3곳 확장<br>구축형 + 유지보수</div>
+      </div>
+      <div class="finance-card">
+        <div class="finance-year">3차년도 (2028)</div>
+        <div class="finance-amount">20억</div>
+        <div class="finance-desc">공공 5곳 + 민간 2곳<br>SaaS 구독 모델 추가</div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+      <div class="chart-container">
+        <div class="chart-title">3개년 매출 목표</div>
+        <div class="chart-subtitle">단위: 억 원</div>
+        <canvas id="revenueChart" height="220"></canvas>
+      </div>
+      <div class="chart-container">
+        <div class="chart-title">초기 자금 조달 계획</div>
+        <div class="chart-subtitle">단위: 억 원</div>
+        <canvas id="fundingChart" height="220"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- SECTION 7: 위험 분석 -->
+<section class="fade-in">
+  <div class="section-label">07 · Risk Analysis</div>
+  <h2 class="section-title">위험 분석 및 대응 전략</h2>
+  <p class="section-desc">
+    사업 추진 과정에서 예상되는 주요 위험 요소와 대응 방안을 사전에 분석했습니다.
+  </p>
+
+  <div class="card">
+    <table class="risk-table">
+      <thead>
+        <tr>
+          <th>위험 유형</th>
+          <th>위험 내용</th>
+          <th>위험도</th>
+          <th>대응 전략</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="color:var(--white); font-weight:600;">기술적 위험</td>
+          <td>AI 에이전트의 환각(Hallucination) 및 예측 불가능한 행동</td>
+          <td><span class="risk-level risk-high">높음</span></td>
+          <td>Human-in-the-loop 의무화, 샌드박스 환경에서 사전 테스트, 행동 반경 엄격 제한</td>
+        </tr>
+        <tr>
+          <td style="color:var(--white); font-weight:600;">시장 위험</td>
+          <td>글로벌 빅테크(MS, Google)의 AgentOps 시장 직접 진출</td>
+          <td><span class="risk-level risk-mid">중간</span></td>
+          <td>공공기관 버티컬 특화, 폐쇄망 온프레미스 기술 우위, 도메인 전문성으로 차별화</td>
+        </tr>
+        <tr>
+          <td style="color:var(--white); font-weight:600;">운영 위험</td>
+          <td>CEO 1인에게 집중된 의사결정 구조</td>
+          <td><span class="risk-level risk-mid">중간</span></td>
+          <td>초기 빠른 실행 후 시리즈 A 이후 핵심 인력 충원, 리스크 분산</td>
+        </tr>
+        <tr>
+          <td style="color:var(--white); font-weight:600;">규제 위험</td>
+          <td>AI 관련 법규 강화 및 공공기관 보안 규정 변경</td>
+          <td><span class="risk-level risk-mid">중간</span></td>
+          <td>법무 전문가 자문 확보, 규정 변화 모니터링, 컴플라이언스 우선 설계</td>
+        </tr>
+        <tr>
+          <td style="color:var(--white); font-weight:600;">재무 위험</td>
+          <td>초기 자금 부족 및 파일럿 프로젝트 지연</td>
+          <td><span class="risk-level risk-low">낮음</span></td>
+          <td>정부 지원 사업 병행 신청, 엔젤 투자 유치, 비용 최소화 전략 유지</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- SECTION 8: 경쟁 분석 -->
+<section class="fade-in">
+  <div class="section-label">08 · Competitive Analysis</div>
+  <h2 class="section-title">경쟁 환경 분석</h2>
+  <p class="section-desc">
+    글로벌 AI 에이전트 스타트업 현황과 파이고시프트의 포지셔닝을 분석합니다.
+  </p>
+
+  <div class="chart-container" style="margin-bottom:2rem;">
+    <div class="chart-title">글로벌 주요 AI 에이전트 스타트업 기업가치</div>
+    <div class="chart-subtitle">단위: 억 달러 (2026년 기준)</div>
+    <canvas id="competitorChart" height="200"></canvas>
+  </div>
+
+  <div class="card-grid card-grid-2">
+    <div class="card">
+      <h3 style="color:var(--neon); margin-bottom:1rem; font-size:1rem;">파이고시프트의 차별화 전략</h3>
+      <ul style="list-style:none; color:var(--muted); font-size:0.9rem; line-height:2;">
+        <li>✅ 공공기관 특화 버티컬 솔루션 (교육청, 지자체)</li>
+        <li>✅ 폐쇄망·온프레미스 환경 지원</li>
+        <li>✅ 공공 보고서 양식 자동화 (HWP, ODT)</li>
+        <li>✅ Human-in-the-loop 안전 설계</li>
+        <li>✅ 에이전트 군단 통합 관리 플랫폼</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--accent2); margin-bottom:1rem; font-size:1rem;">경쟁사 대비 약점 및 보완 계획</h3>
+      <ul style="list-style:none; color:var(--muted); font-size:0.9rem; line-height:2;">
+        <li>⚠️ 초기 브랜드 인지도 부족 → 기술 블로그·웨비나 운영</li>
+        <li>⚠️ 글로벌 대비 자본력 열세 → 정부 지원 사업 적극 활용</li>
+        <li>⚠️ 개발 인력 부족 → AI 에이전트 자체 개발 자동화</li>
+        <li>⚠️ 영업 네트워크 초기 단계 → 기존 관계망(교육청) 활용</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">PyhgoShift</div>
+  <p>Intentional Ego Disruption for Breakthroughs</p>
+  <p style="margin-top:0.5rem; font-size:0.75rem;">Operated by The 7 Parks AI Squad · 2026 사업계획서</p>
+  <p style="margin-top:1rem; font-size:0.75rem; color:#475569;">
+    본 사업계획서는 Manus AI가 파이고시프트(PyhgoShift)의 Gemini 대화 내용을 기반으로 작성했습니다.
+  </p>
+</footer>
+
+<script>
+  // ── CHART DEFAULTS ──
+  Chart.defaults.color = '#94A3B8';
+  Chart.defaults.font.family = "'Segoe UI', 'Noto Sans KR', sans-serif";
+
+  const neon = '#39FF14';
+  const accent = '#38BDF8';
+  const accent2 = '#F472B6';
+  const warning = '#FBBF24';
+  const muted = '#475569';
+
+  // ── 1. Market Growth Chart ──
+  new Chart(document.getElementById('marketGrowthChart'), {
+    type: 'line',
+    data: {
+      labels: ['2025', '2026', '2027', '2028', '2029', '2030', '2031', '2032', '2033'],
+      datasets: [{
+        label: '시장 규모 (억 달러)',
+        data: [76, 114, 171, 256, 383, 574, 859, 1286, 1830],
+        borderColor: neon,
+        backgroundColor: 'rgba(57,255,20,0.08)',
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: neon,
+        pointRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.05)' } },
+        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { callback: v => '$' + v + 'B' } }
+      }
+    }
+  });
+
+  // ── 2. CAGR Chart ──
+  new Chart(document.getElementById('cagrChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Grand View\nResearch', 'Markets and\nMarkets', 'BCC\nResearch', 'Fortune\nBusiness'],
+      datasets: [{
+        label: 'CAGR (%)',
+        data: [49.6, 46.3, 43.3, 40.0],
+        backgroundColor: [
+          'rgba(57,255,20,0.7)',
+          'rgba(56,189,248,0.7)',
+          'rgba(244,114,182,0.7)',
+          'rgba(251,191,36,0.7)',
+        ],
+        borderColor: [neon, accent, accent2, warning],
+        borderWidth: 1,
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { callback: v => v + '%' },
+          min: 35,
+          max: 55
+        }
+      }
+    }
+  });
+
+  // ── 3. Adoption Chart ──
+  new Chart(document.getElementById('adoptionChart'), {
+    type: 'bar',
+    data: {
+      labels: ['2024년', '2025년', '2026년 (예상)'],
+      datasets: [{
+        label: '기업 AI 에이전트 탑재율 (%)',
+        data: [2, 5, 40],
+        backgroundColor: ['rgba(71,85,105,0.7)', 'rgba(56,189,248,0.7)', 'rgba(57,255,20,0.7)'],
+        borderColor: [muted, accent, neon],
+        borderWidth: 1,
+        borderRadius: 8,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { callback: v => v + '%' }
+        }
+      }
+    }
+  });
+
+  // ── 4. Public Sector Chart ──
+  new Chart(document.getElementById('publicSectorChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['교육청 (행정 자동화)', '지자체 (민원 처리)', '공기업 (문서 에이전트)', '국방/보안', '기타 공공기관'],
+      datasets: [{
+        data: [35, 25, 20, 12, 8],
+        backgroundColor: [
+          'rgba(57,255,20,0.8)',
+          'rgba(56,189,248,0.8)',
+          'rgba(244,114,182,0.8)',
+          'rgba(251,191,36,0.8)',
+          'rgba(71,85,105,0.8)',
+        ],
+        borderWidth: 2,
+        borderColor: '#1E293B',
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12, font: { size: 11 } } }
+      }
+    }
+  });
+
+  // ── 5. Revenue Chart ──
+  new Chart(document.getElementById('revenueChart'), {
+    type: 'bar',
+    data: {
+      labels: ['2026년 (1차)', '2027년 (2차)', '2028년 (3차)'],
+      datasets: [{
+        label: '예상 매출 (억 원)',
+        data: [2, 8, 20],
+        backgroundColor: [
+          'rgba(57,255,20,0.6)',
+          'rgba(56,189,248,0.6)',
+          'rgba(244,114,182,0.6)',
+        ],
+        borderColor: [neon, accent, accent2],
+        borderWidth: 2,
+        borderRadius: 8,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { callback: v => v + '억' }
+        }
+      }
+    }
+  });
+
+  // ── 6. Funding Chart ──
+  new Chart(document.getElementById('fundingChart'), {
+    type: 'pie',
+    data: {
+      labels: ['대표이사 자본', '정부 지원 (TIPS 등)', '엔젤 투자'],
+      datasets: [{
+        data: [1, 4, 2],
+        backgroundColor: [
+          'rgba(57,255,20,0.8)',
+          'rgba(56,189,248,0.8)',
+          'rgba(244,114,182,0.8)',
+        ],
+        borderWidth: 2,
+        borderColor: '#1E293B',
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12, font: { size: 11 } } },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) { return ctx.label + ': ' + ctx.raw + '억 원'; }
+          }
+        }
+      }
+    }
+  });
+
+  // ── 7. Competitor Chart ──
+  new Chart(document.getElementById('competitorChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Cursor', 'Glean', 'Sierra', 'Harvey', 'Cognition AI', 'Imbue', 'PyhgoShift\n(목표)'],
+      datasets: [{
+        label: '기업가치 (억 달러)',
+        data: [290, 72, 100, 50, 20, 10, 5],
+        backgroundColor: [
+          'rgba(71,85,105,0.7)',
+          'rgba(71,85,105,0.7)',
+          'rgba(71,85,105,0.7)',
+          'rgba(71,85,105,0.7)',
+          'rgba(71,85,105,0.7)',
+          'rgba(71,85,105,0.7)',
+          'rgba(57,255,20,0.8)',
+        ],
+        borderColor: [muted, muted, muted, muted, muted, muted, neon],
+        borderWidth: 1,
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { callback: v => '$' + v + 'B' }
+        }
+      }
+    }
+  });
+
+  // ── TABS ──
+  function showTab(id) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  // ── SCROLL ANIMATION ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
