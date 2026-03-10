@@ -1,4 +1,4 @@
-export class SandboxContainer {
+export class SandboxManager {
   constructor(state, env) { this.state = state; this.env = env; }
   async fetch(request) { return new Response("Active"); }
 }
@@ -12,11 +12,35 @@ export default {
     };
     if (request.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-    if (new URL(request.url).pathname === "/ask") {
-      try {
-        const { question } = await request.json();
+    const url = new URL(request.url);
 
-        // Helper function to create JSON responses with CORS headers
+    // /api/health 체크 엔드포인트 (멀티 모델 정보 포함)
+    if (url.pathname === "/api/health") {
+      const keys = Object.keys(env);
+      const keyInfo = keys.map(k => `${k}(${(env[k]?.length || 'n/a')})`).join(", ");
+
+      const supportedModels = [
+        "moonshotai/kimi-k2.5",
+        "qwen/qwen3.5-397b-a17b",
+        "deepseek-ai/deepseek-v3.2"
+      ];
+
+      let activeEngine = "NONE";
+      const apiKey = (env.OPENAI_API_KEY || "").trim();
+      if (env.GOOGLE_AI_API_KEY) activeEngine = "GEMINI";
+      else if (apiKey) activeEngine = "NVIDIA NIM (MULTI)";
+      else if (env.ANTHROPIC_API_KEY && env.ANTHROPIC_API_KEY !== 'placeholder') activeEngine = "ANTHROPIC";
+
+      const statusMsg = `PyhgoShift v9.0-BETA | Engine: ${activeEngine} | Models: [${supportedModels.join(", ")}] | Bindings: [${keyInfo}]`;
+      return new Response(statusMsg, { headers: corsHeaders });
+    }
+
+    if (url.pathname === "/ask") {
+      try {
+        const body = await request.json();
+        const question = body.question;
+        const requestedModel = body.model || "moonshotai/kimi-k2.5";
+
         const c = {
           json: (data, status = 200) => new Response(JSON.stringify(data), {
             status,
@@ -24,9 +48,8 @@ export default {
           })
         };
 
-        // [Phase 2] Intent Detection & RAG Logic
+        // [Phase 1] Intent Detection & RAG Logic
         let isStorageCommand = false;
-        // 키워드가 있더라도 '보고', '요약', '확인', '알려' 등이 포함되면 조회로 간주
         if ((question.includes('저장') || question.includes('학습')) &&
           !question.includes('보고') && !question.includes('요약') && !question.includes('확인') && !question.includes('알려')) {
           isStorageCommand = true;
@@ -42,91 +65,116 @@ export default {
           }
         }
 
-        // [Phase 2] RAG Retrieval (Context Injection)
-        let contextKnowledge = "마스터 저장소에 연결되지 않았거나 데이터가 없습니다.";
+        // [Phase 2] RAG Retrieval
+        let contextKnowledge = "마스터 저장소 데이터가 없습니다.";
         if (env.MASTER_STORAGE) {
           try {
-            const list = await env.MASTER_STORAGE.list({ limit: 5, prefix: 'raw/' }); // 최근 5개만 조회
+            const list = await env.MASTER_STORAGE.list({ limit: 5, prefix: 'raw/' });
             if (list.objects.length > 0) {
               const contents = await Promise.all(list.objects.map(async (obj) => {
                 const file = await env.MASTER_STORAGE.get(obj.key);
                 const text = await file.text();
                 return `- [${obj.uploaded.toISOString()}] ${text.substring(0, 200)}...`;
               }));
-              contextKnowledge = "마스터 저장소 데이터 확인 결과:\n" + contents.join("\n");
-            } else {
-              contextKnowledge = "마스터 저장소 데이터 확인 결과:\n저장된 기록이 없습니다.";
+              contextKnowledge = "마스터 저장소 데이터:\n" + contents.join("\n");
             }
           } catch (err) {
-            contextKnowledge = `마스터 저장소 조회 중 오류 발생: ${err}`;
+            contextKnowledge = `저장소 조회 오류: ${err.message}`;
           }
         }
 
-        // v1beta 버전 + models/ 접두사 (Gemini Pro Latest - 위치 제한 우회
-        const finalUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-latest:generateContent?key=" + env.GOOGLE_AI_API_KEY;
-        const response = await fetch(finalUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            system_instruction: {
-              parts: [{
-                text: `
-# ROLE: Stratagem Engine for Commander Park (파이고시프트 전략 엔진)
+        const systemPrompt = `# ROLE: Stratagem Engine for Commander Park (파리고시프트 전략 엔진)
+## PHILOSOPHY
+1. ANALYSIS-STRATEGY-EXECUTION 3단 구조 준수.
+2. NO FLATTERY: 감정적 사족 제거.
+3. DIRECTIVE FORCE: 명확한 지시.
+4. FORMATTING: 가독성 위해 80자 내외 줄바꿈.
+## RETRIEVED KNOWLEDGE (RAG)
+${contextKnowledge}`;
 
-## PHILOSOPHY (마스터 저장소 철학)
-1. **ANALYSIS-STRATEGY-EXECUTION**: 모든 답변은 [상황 파악] -> [전략 수립] -> [실행 계획]의 3단 구조를 엄격히 준수한다.
-2. **NO FLATTERY**: "죄송합니다", "알겠습니다" 등의 감정적 사족을 제거하고, 오직 팩트와 전략만을 보고한다.
-3. **DIRECTIVE FORCE**: 모호한 조언 대신 명확한 지시(Directive)를 내린다.
-4. **FORMATTING**: 가독성을 위해 **80자 내외에서 강제 줄바꿈(\n)**을 시행한다.
+        // [Phase 3] Multi-Engine Selection Logic
+        let response;
+        if (env.GOOGLE_AI_API_KEY && requestedModel === "gemini") {
+          const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-latest:generateContent?key=${env.GOOGLE_AI_API_KEY}`;
+          response = await fetch(geminiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              system_instruction: { parts: [{ text: systemPrompt }] },
+              contents: [{ parts: [{ text: "질문: " + question }] }]
+            })
+          });
+        } else if ((env.OPENAI_API_KEY || "").trim()) {
+          // NVIDIA NIM Optimized (Dynamic Logic)
+          const baseUrl = "https://integrate.api.nvidia.com/v1";
+          const apiKey = (env.OPENAI_API_KEY || "").trim();
 
-## MISSION
-너는 지휘관 박용희의 '마스터 저장소' 지능을 대변한다. 현재 인프라 상황을 냉철하게 분석하고 최적의 전략을 제시하라.
+          let modelConfig: any = {
+            model: requestedModel,
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: question }
+            ],
+            temperature: 1.0,
+            top_p: 1.0,
+            max_tokens: 16384,
+            chat_template_kwargs: { thinking: true } as any
+          };
 
-## RETRIEVED KNOWLEDGE (RAG Context)
-${contextKnowledge}
-` }]
+          // Override for specific models
+          if (requestedModel.includes("qwen")) {
+            modelConfig.temperature = 0.6;
+            modelConfig.top_p = 0.95;
+            modelConfig.chat_template_kwargs = { enable_thinking: true };
+          } else if (requestedModel.includes("deepseek")) {
+            modelConfig.max_tokens = 8192;
+            modelConfig.top_p = 0.95;
+            modelConfig.chat_template_kwargs = { thinking: true };
+          }
+
+          response = await fetch(`${baseUrl}/chat/completions`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${apiKey}`
             },
-            contents: [{
-              parts: [{ text: "질문: " + question }]
-            }]
-          })
-        });
-
-
-
-        if (response.status === 429) {
-          return c.json({ response: "시스템 재충전 중(30초)... 지휘관님, 잠시 대기하십시오." });
+            body: JSON.stringify(modelConfig)
+          });
+        } else {
+          return c.json({ response: "사용 가능한 AI 엔진 키가 없습니다. (OPENAI_API_KEY 등 부재)" }, 500);
         }
 
         if (!response.ok) {
-          const errorText = await response.text();
-          return c.json({ response: `Error: ${response.status} ${errorText}` }, response.status); // 디버깅용
+          const errorDetail = await response.text();
+          return c.json({ response: `엔진 응답 에러 (${response.status}): ${errorDetail.substring(0, 200)}` }, response.status);
         }
 
         const data = await response.json();
-        // Gemini API response structure validation
-        if (
-          typeof data === 'object' &&
-          data !== null &&
-          'candidates' in data &&
-          Array.isArray((data).candidates) &&
-          (data).candidates.length > 0 &&
-          'content' in (data).candidates[0] &&
-          'parts' in (data).candidates[0].content &&
-          Array.isArray((data).candidates[0].content.parts) &&
-          (data).candidates[0].content.parts.length > 0 &&
-          'text' in (data).candidates[0].content.parts[0]
-        ) {
-          const answer = (data).candidates[0].content.parts[0].text;
-          return c.json({ response: answer });
+        let answer = "";
+
+        // Dynamic Parsing
+        if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+          answer = data.candidates[0].content.parts[0].text;
+        } else if (data.choices?.[0]?.message) {
+          const msg = data.choices[0].message;
+          // Support Reasoning Content if available
+          const reasoning = msg.reasoning_content || "";
+          const content = msg.content || "";
+          answer = reasoning ? `[THINKING]\n${reasoning}\n\n[RESPONSE]\n${content}` : content;
+        } else if (data.content?.[0]?.text) {
+          answer = data.content[0].text;
         } else {
-          return c.json({ response: "Invalid API response structure", raw: data }, 500);
+          answer = "응답 형식을 해석할 수 없습니다.";
         }
+
+        return c.json({ response: answer });
 
       } catch (e) {
         return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: corsHeaders });
       }
     }
-    return new Response("PyhgoShift Engine v8.3-FINAL-FIX Active", { headers: corsHeaders });
+
+    if (env.ASSETS) return env.ASSETS.fetch(request);
+    return new Response("PyhgoShift Engine Running (No Assets)", { headers: corsHeaders });
   }
 };

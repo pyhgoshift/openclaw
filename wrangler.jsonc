@@ -1,6 +1,10 @@
 ﻿{
-  "name": "moltbot-sandbox",
+  "name": "pyhgoshift-engine",
   "main": "app/api/src/index.ts",
+  "assets": {
+    "directory": "app/web",
+    "binding": "ASSETS"
+  },
   "compatibility_date": "2024-09-23",
   "compatibility_flags": [
     "nodejs_compat"
@@ -9,30 +13,25 @@
     "bindings": [
       {
         "name": "MOLT_SANDBOX",
-        "class_name": "SandboxContainer"
+        "class_name": "SandboxManager"
       }
     ]
   },
   "migrations": [
     {
-      "tag": "v2026_final_purge_all",
-      "deleted_classes": [
-        "Sandbox",
-        "SandboxContainer"
-      ]
-    },
-    {
-      "tag": "v2026_reborn_success",
+      "tag": "v1_new",
       "new_classes": [
-        "SandboxContainer"
+        "SandboxManager"
       ]
     }
   ],
-  "r2_buckets": [
+  "routes": [
     {
-      "binding": "moltbot_config",
-      "bucket_name": "moltbot-config"
-    },
+      "pattern": "pyhgoshift.com",
+      "custom_domain": true
+    }
+  ],
+  "r2_buckets": [
     {
       "binding": "MASTER_STORAGE",
       "bucket_name": "pyhgoshift-master-skills"
