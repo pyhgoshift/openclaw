@@ -1,0 +1,33 @@
+name: 🚀 PyhgoShift Auto Deploy
+
+on:
+  push:
+    branches:
+      - main      # main 브랜치에 push되면 자동 실행
+  workflow_dispatch:  # GitHub 웹에서 수동 실행도 가능
+
+jobs:
+  deploy:
+    name: Deploy to Cloudflare Workers
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: 📦 Node.js 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 🔧 의존성 설치
+        run: npm ci
+
+      - name: 🚀 Cloudflare Workers 배포
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
