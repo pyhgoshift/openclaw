@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "pyhgoshift-engine",
   "main": "app/api/src/index.ts",
   "assets": {
@@ -29,6 +29,10 @@
     {
       "pattern": "pyhgoshift.com",
       "custom_domain": true
+    },
+    {
+      "pattern": "www.pyhgoshift.com/engine*",
+      "zone_name": "pyhgoshift.com"
     }
   ],
   "r2_buckets": [
